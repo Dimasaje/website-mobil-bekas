@@ -10,6 +10,7 @@ import {
   inArray,
   lte,
   ne,
+  notInArray,
   or,
   sql,
 } from "drizzle-orm";
@@ -41,8 +42,11 @@ const querySchema = z.object({
 
 // GET /api/cars/filters - Endpoint opsi filter (merek dan rentang nilai)
 carsRouter.get("/filters", async (c) => {
-  // Hanya hitung mobil publik (bukan draft)
-  const publicCarsFilter = ne(schema.cars.status, "draft");
+  // Hanya hitung mobil publik (bukan draft atau diarsipkan)
+  const publicCarsFilter = notInArray(schema.cars.status, [
+    "draft",
+    "diarsipkan",
+  ]);
 
   const [stats] = await db
     .select({
@@ -66,7 +70,7 @@ carsRouter.get("/filters", async (c) => {
       schema.cars,
       and(
         eq(schema.brands.id, schema.cars.brandId),
-        ne(schema.cars.status, "draft"),
+        notInArray(schema.cars.status, ["draft", "diarsipkan"]),
       ),
     )
     .groupBy(schema.brands.id, schema.brands.name, schema.brands.slug)
@@ -125,8 +129,8 @@ carsRouter.get("/", async (c) => {
     limit,
   } = parseResult.data;
 
-  // Syarat mutlak: status draft TIDAK PERNAH tampil di publik
-  const conditions = [ne(schema.cars.status, "draft")];
+  // Syarat mutlak: status draft dan diarsipkan TIDAK PERNAH tampil di publik
+  const conditions = [notInArray(schema.cars.status, ["draft", "diarsipkan"])];
 
   if (status) {
     conditions.push(eq(schema.cars.status, status));
@@ -283,7 +287,7 @@ carsRouter.get("/:slug", async (c) => {
   const car = await db.query.cars.findMany({
     where: and(
       eq(schema.cars.slug, slug),
-      ne(schema.cars.status, "draft"), // Draft tidak pernah tampil
+      notInArray(schema.cars.status, ["draft", "diarsipkan"]), // Draft dan diarsipkan tidak pernah tampil
     ),
     limit: 1,
     with: {

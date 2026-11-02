@@ -10,8 +10,8 @@ import { errorHandler, notFoundHandler } from "./middlewares/error-handler";
 import { authRouter } from "./routes/auth";
 import { carsRouter } from "./routes/cars";
 import { healthRouter } from "./routes/health";
+import { adminCarsRouter } from "./routes/admin-cars";
 import { adminLeadsRouter, leadsRouter } from "./routes/leads";
-import { adminPhotosRouter } from "./routes/photos";
 import { defaultStorage } from "./services/storage";
 
 export const app = new Hono();
@@ -59,7 +59,7 @@ api.get("/db-check", async (c) => {
 const adminApi = new Hono();
 adminApi.use("*", requireAdminAuth);
 adminApi.route("/auth", authRouter);
-adminApi.route("/cars", adminPhotosRouter);
+adminApi.route("/cars", adminCarsRouter);
 adminApi.route("/leads", adminLeadsRouter);
 adminApi.get("/dashboard", (c) => {
   const admin = c.get("admin");
