@@ -1,8 +1,13 @@
-import { describe, expect, it } from "bun:test";
-import { count, eq, sql } from "drizzle-orm";
+import { beforeAll, describe, expect, it } from "bun:test";
+import { count, sql } from "drizzle-orm";
 import { db, schema } from "../src/index";
+import { runSeed } from "../src/seed";
 
 describe("Database Schema & Seed Verification", () => {
+  beforeAll(async () => {
+    await runSeed();
+  });
+
   it("connects to PostgreSQL", async () => {
     const res = await db.execute(sql`SELECT 1 as result`);
     expect(res).toBeDefined();
