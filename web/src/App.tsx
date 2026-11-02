@@ -4,8 +4,9 @@ import { CarDetailPage } from "./pages/CarDetailPage";
 import { CatalogPage } from "./pages/CatalogPage";
 import { CreditPage } from "./pages/CreditPage";
 import { HomePage } from "./pages/HomePage";
-import { ContactPage, TestimonialsPage, TradeInPage } from "./pages/OtherPages";
+import { ContactPage, TestimonialsPage } from "./pages/OtherPages";
 import { PageNotFound } from "./pages/PageNotFound";
+import { TradeInPage } from "./pages/TradeInPage";
 
 export function App() {
   return (

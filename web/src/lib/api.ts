@@ -229,11 +229,20 @@ export const apiClient = {
 
   // Leads
   submitLead: (data: {
+    type: "tukar_tambah" | "test_drive" | "kontak" | "simulasi";
     name: string;
     phone: string;
-    source: "whatsapp" | "test_drive" | "kredit" | "tukar_tambah" | "jual";
-    carId?: string;
-    notes?: string;
-    hp?: string;
-  }) => api.post<ApiResponse<{ id: string }>>("/api/leads", data),
+    carId?: string | null;
+    notes?: string | null;
+    data?: Record<string, unknown>;
+    honeypot?: string;
+  }) =>
+    api.post<
+      ApiResponse<{
+        id: string;
+        type: string;
+        status: string;
+        message?: string;
+      }>
+    >("/api/leads", data),
 };
