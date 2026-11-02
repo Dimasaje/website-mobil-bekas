@@ -97,9 +97,11 @@ export const api = {
 // Types for domain entities
 export interface CarPhoto {
   id: string;
-  photoUrl: string;
+  url?: string;
+  photoUrl?: string;
   isPrimary: boolean;
-  orderIndex: number;
+  order?: number;
+  orderIndex?: number;
 }
 
 export interface Car {
@@ -121,6 +123,7 @@ export interface Car {
   description?: string | null;
   status: "tersedia" | "booking" | "terjual";
   isFeatured: boolean;
+  primaryPhoto?: string | null;
   photos?: CarPhoto[];
 }
 
