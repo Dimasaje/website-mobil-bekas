@@ -83,7 +83,26 @@ Setelah admin dibuat, kembalikan `SEED_ON_START=false` di `.env` dan `docker com
 
 Login admin di `https://bintangmobil.co.id/admin/login` memakai `ADMIN_EMAIL` / `ADMIN_PASSWORD` dari `.env` saat seed.
 
-## 5. Rilis berikutnya
+## 5. Uji lokal tanpa domain
+
+Deploy bisa dicoba di komputer sendiri sebelum ada VPS/domain. Pakai domain `http://localhost` supaya Caddy melayani HTTP biasa (tanpa sertifikat yang harus dipercaya browser):
+
+```bash
+cp .env.production.example .env
+# ubah di .env:
+#   SITE_DOMAIN=http://localhost
+#   SITE_URL=http://localhost
+docker compose build
+SEED_ON_START=true docker compose up -d
+```
+
+Buka `http://localhost`. Perlu diperhatikan:
+
+- Port 80 harus bebas. Kalau dipakai (IIS, Skype, nginx), ubah pemetaan port proxy menjadi `"8080:80"` di `docker-compose.yml` dan set `SITE_URL=http://localhost:8080`.
+- Data yang dibuat saat uji lokal hilang kalau volume dihapus: `docker compose down -v`.
+- `.env` hasil uji lokal jangan dipakai di VPS — buat ulang dari `.env.production.example`.
+
+## 6. Rilis berikutnya
 
 ```bash
 cd /opt/website-mobil-bekas
@@ -92,11 +111,11 @@ docker compose build app
 docker compose up -d app
 ```
 
-Migrasi otomatis dijalankan oleh entrypoint sebelum API start, jadi tidak ada langkah manual. Bila migrasi gagal, container berhenti (`set -e`) dan situs menjadi 502 di proxy sampai masalahnya diperbaiki — backup dulu sebelum rilis yang mengubah skema (bagian 6).
+Migrasi otomatis dijalankan oleh entrypoint sebelum API start, jadi tidak ada langkah manual. Bila migrasi gagal, container berhenti (`set -e`) dan situs menjadi 502 di proxy sampai masalahnya diperbaiki — backup dulu sebelum rilis yang mengubah skema (bagian 7).
 
 Rollback: `git checkout <commit-lama> && docker compose build app && docker compose up -d app`. Migrasi tidak mundur otomatis; kalau rilis baru sudah mengubah skema, restore backup.
 
-## 6. Backup
+## 7. Backup
 
 Satu perintah untuk database + foto:
 
@@ -119,7 +138,7 @@ Jadwalkan harian lewat cron VPS, mis. pukul 03:00:
 
 Salin `backups/` ke luar VPS (object storage, `rsync` ke mesin lain) — backup yang hanya ada di VPS yang sama tidak melindungi dari kehilangan disk.
 
-## 7. Restore
+## 8. Restore
 
 ```bash
 # database saja
@@ -141,7 +160,7 @@ docker compose up -d db
 docker compose up -d
 ```
 
-## 8. Operasional
+## 9. Operasional
 
 | Kebutuhan | Perintah |
 | --- | --- |
@@ -154,7 +173,7 @@ docker compose up -d
 | Hentikan semua | `docker compose down` (volume tetap; `down -v` menghapus data) |
 | Seed manual | `docker compose exec app bun run db:seed` |
 
-## 9. Troubleshooting
+## 10. Troubleshooting
 
 **Sertifikat tidak terbit.** Cek `docker compose logs proxy`. Penyebab umum: DNS belum mengarah ke VPS, port 80/443 tertutup, atau domain sudah dipakai proses lain (hentikan nginx/apache di host).
 
