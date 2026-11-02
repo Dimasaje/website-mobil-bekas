@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { EmptyState } from "../components/common/EmptyState";
 import { ErrorState } from "../components/common/ErrorState";
 import { LoadingSpinner } from "../components/common/LoadingSpinner";
 import { apiClient, type Car } from "../lib/api";
 
 export function CatalogPage() {
+  const [searchParams] = useSearchParams();
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -14,7 +15,28 @@ export function CatalogPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await apiClient.getCars();
+      const params: Record<string, string | number | undefined> = {};
+      const brand = searchParams.get("brand");
+      const minPrice = searchParams.get("minPrice");
+      const maxPrice = searchParams.get("maxPrice");
+      const minYear = searchParams.get("minYear");
+      const maxYear = searchParams.get("maxYear");
+      const search = searchParams.get("search");
+      const transmission = searchParams.get("transmission");
+      const fuelType = searchParams.get("fuelType");
+      const sort = searchParams.get("sort");
+
+      if (brand) params.brand = brand;
+      if (minPrice) params.minPrice = Number(minPrice);
+      if (maxPrice) params.maxPrice = Number(maxPrice);
+      if (minYear) params.minYear = Number(minYear);
+      if (maxYear) params.maxYear = Number(maxYear);
+      if (search) params.search = search;
+      if (transmission) params.transmission = transmission;
+      if (fuelType) params.fuelType = fuelType;
+      if (sort) params.sort = sort;
+
+      const res = await apiClient.getCars(params);
       if (res.data) setCars(res.data);
     } catch (err) {
       setError(
@@ -27,7 +49,7 @@ export function CatalogPage() {
 
   useEffect(() => {
     fetchCars();
-  }, []);
+  }, [searchParams.toString()]);
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">

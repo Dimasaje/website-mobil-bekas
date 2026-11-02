@@ -15,6 +15,44 @@ import {
 } from "../lib/api";
 import { buildWhatsAppLink } from "../lib/whatsapp";
 
+export function buildQuickSearchQuery(params: {
+  brand?: string;
+  priceRange?: string;
+  yearRange?: string;
+}): string {
+  const q = new URLSearchParams();
+
+  if (params.brand) {
+    q.append("brand", params.brand);
+  }
+
+  if (params.priceRange === "under150") {
+    q.append("maxPrice", "150000000");
+  } else if (params.priceRange === "150-250") {
+    q.append("minPrice", "150000000");
+    q.append("maxPrice", "250000000");
+  } else if (params.priceRange === "250-400") {
+    q.append("minPrice", "250000000");
+    q.append("maxPrice", "400000000");
+  } else if (params.priceRange === "above400") {
+    q.append("minPrice", "400000000");
+  }
+
+  if (params.yearRange === "gte2022") {
+    q.append("minYear", "2022");
+  } else if (params.yearRange === "2019-2021") {
+    q.append("minYear", "2019");
+    q.append("maxYear", "2021");
+  } else if (params.yearRange === "2016-2018") {
+    q.append("minYear", "2016");
+    q.append("maxYear", "2018");
+  } else if (params.yearRange === "under2016") {
+    q.append("maxYear", "2015");
+  }
+
+  return q.toString();
+}
+
 export function HomePage() {
   const navigate = useNavigate();
   const { settings: layoutSettings } = useLayoutSettings();
@@ -32,7 +70,7 @@ export function HomePage() {
   // Quick search form state
   const [selectedBrand, setSelectedBrand] = useState("");
   const [selectedPriceRange, setSelectedPriceRange] = useState("");
-  const [selectedBodyType, setSelectedBodyType] = useState("");
+  const [selectedYearRange, setSelectedYearRange] = useState("");
 
   const fetchData = async () => {
     setLoading(true);
@@ -99,24 +137,11 @@ export function HomePage() {
   // Quick search submit
   const handleQuickSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    const params = new URLSearchParams();
-
-    if (selectedBrand) params.append("brandId", selectedBrand);
-    if (selectedBodyType) params.append("bodyType", selectedBodyType);
-
-    if (selectedPriceRange === "under150") {
-      params.append("maxPrice", "150000000");
-    } else if (selectedPriceRange === "150-250") {
-      params.append("minPrice", "150000000");
-      params.append("maxPrice", "250000000");
-    } else if (selectedPriceRange === "250-400") {
-      params.append("minPrice", "250000000");
-      params.append("maxPrice", "400000000");
-    } else if (selectedPriceRange === "above400") {
-      params.append("minPrice", "400000000");
-    }
-
-    const query = params.toString();
+    const query = buildQuickSearchQuery({
+      brand: selectedBrand,
+      priceRange: selectedPriceRange,
+      yearRange: selectedYearRange,
+    });
     navigate(`/katalog${query ? `?${query}` : ""}`);
   };
 
@@ -167,7 +192,7 @@ export function HomePage() {
               🔍 Temukan Mobil Pilihan Anda
             </h2>
             <p className="text-xs text-slate-500">
-              Filter instan berdasarkan merek, anggaran, dan tipe bodi.
+              Filter instan berdasarkan merek, anggaran, dan tahun pembuatan.
             </p>
           </div>
 
@@ -191,7 +216,7 @@ export function HomePage() {
               >
                 <option value="">Semua Merek</option>
                 {filtersData?.brands?.map((brand) => (
-                  <option key={brand.id} value={brand.id}>
+                  <option key={brand.id} value={brand.slug}>
                     {brand.name}
                   </option>
                 ))}
@@ -229,26 +254,25 @@ export function HomePage() {
               </select>
             </div>
 
-            {/* Tipe Bodi */}
+            {/* Tahun Pembuatan */}
             <div>
               <label
-                htmlFor="quick-body"
+                htmlFor="quick-year"
                 className="block text-xs font-semibold text-slate-700 mb-1"
               >
-                Tipe Bodi
+                Tahun Pembuatan
               </label>
               <select
-                id="quick-body"
-                value={selectedBodyType}
-                onChange={(e) => setSelectedBodyType(e.target.value)}
+                id="quick-year"
+                value={selectedYearRange}
+                onChange={(e) => setSelectedYearRange(e.target.value)}
                 className="form-select text-sm h-11"
               >
-                <option value="">Semua Tipe</option>
-                <option value="mpv">MPV / Keluarga</option>
-                <option value="suv">SUV</option>
-                <option value="hatchback">Hatchback</option>
-                <option value="city_car">City Car</option>
-                <option value="sedan">Sedan</option>
+                <option value="">Semua Tahun</option>
+                <option value="gte2022">&gt;= 2022 (Terbaru)</option>
+                <option value="2019-2021">2019 - 2021</option>
+                <option value="2016-2018">2016 - 2018</option>
+                <option value="under2016">&lt; 2016</option>
               </select>
             </div>
 

@@ -125,8 +125,8 @@ export interface Car {
 }
 
 export interface CarFilters {
-  brands: Array<{ id: string; name: string }>;
-  bodyTypes: string[];
+  brands: Array<{ id: string; name: string; slug: string; carCount?: number }>;
+  bodyTypes?: string[];
   transmissions: string[];
   fuelTypes: string[];
   priceRange: { min: number; max: number };
