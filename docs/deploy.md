@@ -115,6 +115,18 @@ Migrasi otomatis dijalankan oleh entrypoint sebelum API start, jadi tidak ada la
 
 Rollback: `git checkout <commit-lama> && docker compose build app && docker compose up -d app`. Migrasi tidak mundur otomatis; kalau rilis baru sudah mengubah skema, restore backup.
 
+### Build selalu di dalam image
+
+Image dibangun di Linux oleh `Dockerfile` (stage build menjalankan `bun install` dan `bun run build` di dalam image), jadi artefak apa pun yang ada di mesin pengembang tidak pernah ikut — `web/dist` dan `api/dist` dikecualikan `.dockerignore`.
+
+Jangan build di Windows lalu menyalin hasilnya ke server atau meng-commit `dist/`: artefak build bergantung pada platform tempat ia dibuat (binding native `sharp`, resolusi modul), dan di Linux gejalanya berupa kegagalan start seperti:
+
+```
+Could not load the "sharp" module using the linux-x64 runtime
+```
+
+`api/package.json` sudah memakai `--external sharp`, jadi `sharp` di-resolve dari `node_modules` mesin yang menjalankan dan build lokal Windows tidak lagi membundel binding native. Meski begitu, aturan tetap: **jalankan `docker compose build`, jangan jalankan `bun run build` di Windows lalu mengandalkan `dist/`**. `dist/` sudah masuk `.gitignore`.
+
 ## 7. Backup
 
 Satu perintah untuk database + foto:
