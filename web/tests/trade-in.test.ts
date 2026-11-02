@@ -2,7 +2,11 @@ import { describe, expect, it } from "bun:test";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import { MemoryRouter } from "react-router-dom";
-import { TradeInPage, resetModeState } from "../src/pages/TradeInPage";
+import {
+  TradeInPage,
+  resetModeState,
+  shouldApplyInitialTarget,
+} from "../src/pages/TradeInPage";
 
 describe("TradeInPage Component (T-24)", () => {
   it("exports TradeInPage component as a function", () => {
@@ -121,5 +125,42 @@ describe("TradeInPage mode switching (T-47)", () => {
 
     expect(reset.selectedCarId).toBe("");
     expect(reset.targetCarName).toBe("");
+  });
+});
+
+describe("TradeInPage initial target guard (T-48)", () => {
+  it("applies the query param target only in the initial mode", () => {
+    expect(
+      shouldApplyInitialTarget(false, "tukar_tambah", "tukar_tambah"),
+    ).toBe(true);
+    expect(shouldApplyInitialTarget(false, "test_drive", "tukar_tambah")).toBe(
+      false,
+    );
+  });
+
+  it("never reapplies the target after the first load", () => {
+    expect(shouldApplyInitialTarget(true, "tukar_tambah", "tukar_tambah")).toBe(
+      false,
+    );
+    expect(shouldApplyInitialTarget(true, "test_drive", "test_drive")).toBe(
+      false,
+    );
+  });
+
+  it("keeps the select empty when arriving with carId but no target label", () => {
+    const html = renderToString(
+      React.createElement(
+        MemoryRouter,
+        {
+          initialEntries: [
+            "/tukar-tambah?target=Civic+Turbo+RS&carId=car-uuid-1",
+          ],
+        },
+        React.createElement(TradeInPage),
+      ),
+    );
+
+    expect(html).toContain("Unit Dipilih: Civic Turbo RS");
+    expect(html).not.toContain("Unit rujukan saat ini");
   });
 });

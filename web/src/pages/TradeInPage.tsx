@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useLayoutSettings } from "../components/layout/Layout";
 import { apiClient, type Car } from "../lib/api";
@@ -32,6 +32,17 @@ export function resetModeState(
     preferredDate: "",
     preferredTime: "",
   };
+}
+
+// Target dari query param hanya dipasang sekali, dan hanya selama mode awal
+// masih aktif. Tanpa ini, reset dari changeMode langsung ditimpa lagi oleh
+// hasil muat katalog sehingga muncul unit "hantu" (label terisi, carId kosong).
+export function shouldApplyInitialTarget(
+  alreadyApplied: boolean,
+  mode: FormMode,
+  initialMode: FormMode,
+): boolean {
+  return !alreadyApplied && mode === initialMode;
 }
 
 export function TradeInPage() {
@@ -77,25 +88,41 @@ export function TradeInPage() {
   const [submittedLeadId, setSubmittedLeadId] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // Load cars for selection
+  // Load cars for selection. Katalog dimuat sekali; target dari query param
+  // dipasang lewat guard agar reset mode tidak ditimpa.
+  const modeRef = useRef(mode);
+  modeRef.current = mode;
+  const initialTargetApplied = useRef(false);
+
   useEffect(() => {
     let mounted = true;
     apiClient
       .getCars({ limit: 50, status: "tersedia" })
       .then((res) => {
-        if (mounted && res.data) {
-          setCatalogCars(res.data);
-          if (initialCarId && !targetCarName) {
-            const found = res.data.find((c) => c.id === initialCarId);
-            if (found) setTargetCarName(found.title);
-          }
+        if (!mounted || !res.data) return;
+
+        setCatalogCars(res.data);
+
+        if (!initialCarId || initialTargetName) return;
+        if (
+          !shouldApplyInitialTarget(
+            initialTargetApplied.current,
+            modeRef.current,
+            initialMode,
+          )
+        ) {
+          return;
         }
+
+        initialTargetApplied.current = true;
+        const found = res.data.find((c) => c.id === initialCarId);
+        if (found) setTargetCarName(found.title);
       })
       .catch(() => {});
     return () => {
       mounted = false;
     };
-  }, [initialCarId, targetCarName]);
+  }, []);
 
   const validate = () => {
     const errors: Record<string, string> = {};
