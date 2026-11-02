@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { ErrorState } from "../components/common/ErrorState";
 import { LoadingSpinner } from "../components/common/LoadingSpinner";
 import { apiClient, type Car } from "../lib/api";
+import { buildWhatsAppLink } from "../lib/whatsapp";
 
 export function CarDetailPage() {
   const { slug } = useParams<{ slug: string }>();
@@ -103,9 +104,10 @@ export function CarDetailPage() {
         </p>
         <div className="flex gap-4">
           <a
-            href={`https://wa.me/6281298765432?text=${encodeURIComponent(
-              `Halo, saya ingin tanya unit ${car.title} (Rp ${car.price})`,
-            )}`}
+            href={buildWhatsAppLink({
+              context: "car",
+              params: { carTitle: car.title, price: car.price },
+            })}
             target="_blank"
             rel="noopener noreferrer"
             className="btn btn-wa flex-1"

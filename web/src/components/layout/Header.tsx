@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
+import { buildWhatsAppLink } from "../../lib/whatsapp";
 
 export interface HeaderProps {
   showroomName?: string;
@@ -21,9 +22,11 @@ export function Header({
     { to: "/kontak", label: "Kontak" },
   ];
 
-  const waUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
-    `Halo ${showroomName}, saya tertarik tanya stok unit mobil bekas`,
-  )}`;
+  const waUrl = buildWhatsAppLink({
+    phoneNumber: whatsappNumber,
+    showroomName,
+    context: "general",
+  });
 
   return (
     <header className="sticky top-0 z-[100] bg-white border-b border-slate-200 shadow-sm">

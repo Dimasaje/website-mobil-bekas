@@ -4,6 +4,7 @@ import { EmptyState } from "../components/common/EmptyState";
 import { ErrorState } from "../components/common/ErrorState";
 import { LoadingSpinner } from "../components/common/LoadingSpinner";
 import { apiClient, type Car, type SiteSettings } from "../lib/api";
+import { buildWhatsAppLink } from "../lib/whatsapp";
 
 export function HomePage() {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
@@ -61,9 +62,11 @@ export function HomePage() {
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
-              href={`https://wa.me/${waNumber}?text=${encodeURIComponent(
-                "Halo, saya ingin konsultasi mobil bekas",
-              )}`}
+              href={buildWhatsAppLink({
+                phoneNumber: waNumber,
+                showroomName: settings?.showroomName,
+                context: "general",
+              })}
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-wa"
@@ -174,9 +177,12 @@ export function HomePage() {
                         Detail
                       </Link>
                       <a
-                        href={`https://wa.me/${waNumber}?text=${encodeURIComponent(
-                          `Halo, saya tertarik dengan unit ${car.title}`,
-                        )}`}
+                        href={buildWhatsAppLink({
+                          phoneNumber: waNumber,
+                          showroomName: settings?.showroomName,
+                          context: "car",
+                          params: { carTitle: car.title, price: car.price },
+                        })}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="btn btn-wa btn-sm"
