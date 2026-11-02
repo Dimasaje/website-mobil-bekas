@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Konten & Pengaturan Situs — Bintang Mobil Admin</title>
+  <link rel="stylesheet" href="../tokens.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family-sans);
+      background-color: var(--color-bg-canvas);
+      color: var(--color-text-primary);
+      display: flex;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .admin-sidebar {
+      width: 250px;
+      background: #0F172A;
+      color: #94A3B8;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar-header { padding: var(--space-5) var(--space-4); border-bottom: 1px solid #1E293B; color: #FFF; font-size: var(--font-size-base); font-weight: bold; }
+    .sidebar-nav { list-style: none; padding: var(--space-4) var(--space-2); display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
+    .nav-item a { display: flex; align-items: center; gap: var(--space-3); padding: 10px var(--space-3); border-radius: var(--radius-md); font-size: var(--font-size-sm); color: #94A3B8; }
+    .nav-item a:hover, .nav-item a.active { background: #1E293B; color: #FFF; }
+    .nav-item a.active { background: var(--color-primary); }
+
+    .admin-main { flex: 1; display: flex; flex-direction: column; overflow-x: hidden; }
+    .admin-topbar { height: 64px; background: var(--color-bg-surface); border-bottom: 1px solid var(--color-border-subtle); display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-6); }
+    .admin-content { padding: var(--space-6); max-width: 960px; }
+
+    .card {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+      box-shadow: var(--shadow-sm);
+    }
+    .card-title {
+      font-size: var(--font-size-lg);
+      font-weight: bold;
+      color: var(--color-primary);
+      margin-bottom: var(--space-4);
+      padding-bottom: var(--space-2);
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .form-label {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .form-control {
+      min-height: 44px;
+      padding: 0 var(--space-3);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      background: var(--color-bg-surface);
+      outline: none;
+    }
+    .form-control:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-100);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0 var(--space-5);
+      min-height: 48px;
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      background: var(--color-primary);
+      color: #FFF;
+    }
+
+    .tab-pills {
+      display: flex;
+      gap: var(--space-2);
+      margin-bottom: var(--space-6);
+      border-bottom: 1px solid var(--color-border-subtle);
+      padding-bottom: var(--space-2);
+    }
+    .tab-pill {
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--color-text-secondary);
+    }
+    .tab-pill.active {
+      background: var(--color-primary-50);
+      color: var(--color-primary);
+    }
+
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .admin-sidebar { width: 100%; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">🚗 Bintang Mobil Admin</div>
+    <ul class="sidebar-nav">
+      <li class="nav-item"><a href="dashboard.html">📊 Dashboard</a></li>
+      <li class="nav-item"><a href="mobil-list.html">🚗 Kelola Stok Mobil</a></li>
+      <li class="nav-item"><a href="leads.html">📥 Leads & Prospek</a></li>
+      <li class="nav-item"><a href="konten.html" class="active">📝 Konten & Pengaturan</a></li>
+    </ul>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <div>Konfigurasi Website & Konten Publik</div>
+      <div style="font-size: 13px;">Login: admin@bintangmobil.com</div>
+    </header>
+
+    <div class="admin-content">
+      <h1 style="font-size: var(--font-size-2xl); font-weight: bold; margin-bottom: var(--space-4);">Pengaturan Showroom & Konten</h1>
+
+      <div class="tab-pills">
+        <button class="tab-pill active">⚙️ Pengaturan Kontak & Kredit</button>
+        <button class="tab-pill">🔥 Kelola Promo Banner</button>
+        <button class="tab-pill">⭐ Kelola Testimoni</button>
+        <button class="tab-pill">📰 Kelola Artikel Tips</button>
+      </div>
+
+      <form>
+        <!-- 1. WhatsApp & Kontak Utama -->
+        <div class="card">
+          <div class="card-title">1. Kontak Utama & WhatsApp Sales (Kanal Closing)</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Nama Showroom / Dealer</label>
+              <input type="text" class="form-control" value="Bintang Mobil Bekas">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nomor WhatsApp Utama (Target Link wa.me)</label>
+              <input type="text" class="form-control" value="6281298765432">
+              <small style="color: var(--color-text-muted); font-size: 11px;">Format internasional tanpa tanda + (contoh: 6281298765432)</small>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nomor Telepon Kantor Showroom</label>
+              <input type="text" class="form-control" value="(021) 8590-1234">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Jam Operasional Showroom</label>
+              <input type="text" class="form-control" value="Setiap Hari 09.00 - 18.00 WIB">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Alamat Lengkap Showroom</label>
+            <input type="text" class="form-control" value="Jl. Otista Raya No. 45, Bidara Cina, Jatinegara, Jakarta Timur 13330">
+          </div>
+        </div>
+
+        <!-- 2. Parameter Kredit Default -->
+        <div class="card">
+          <div class="card-title">2. Parameter Standar Kalkulator Kredit</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Persentase DP Minimum Default (%)</label>
+              <input type="number" class="form-control" value="20">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Estimasi Suku Bunga Pertahun (%)</label>
+              <input type="number" step="0.1" class="form-control" value="8.5">
+            </div>
+          </div>
+        </div>
+
+        <button type="button" class="btn">Simpan Perubahan Pengaturan</button>
+      </form>
+    </div>
+  </main>
+
+</body>
+</html>

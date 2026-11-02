@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin — Bintang Mobil Bekas</title>
+  <link rel="stylesheet" href="../tokens.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family-sans);
+      background-color: var(--color-bg-canvas);
+      color: var(--color-text-primary);
+      display: flex;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    /* Admin Sidebar */
+    .admin-sidebar {
+      width: 250px;
+      background: #0F172A;
+      color: #94A3B8;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar-header {
+      padding: var(--space-5) var(--space-4);
+      border-bottom: 1px solid #1E293B;
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      color: #FFF;
+      font-size: var(--font-size-base);
+      font-weight: bold;
+    }
+    .sidebar-nav {
+      list-style: none;
+      padding: var(--space-4) var(--space-2);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+    }
+    .nav-item a {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+      padding: 10px var(--space-3);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      font-weight: 500;
+      color: #94A3B8;
+      transition: background var(--transition-fast), color var(--transition-fast);
+    }
+    .nav-item a:hover, .nav-item a.active {
+      background: #1E293B;
+      color: #FFF;
+    }
+    .nav-item a.active {
+      background: var(--color-primary);
+    }
+    .sidebar-footer {
+      padding: var(--space-4);
+      border-top: 1px solid #1E293B;
+      font-size: var(--font-size-xs);
+    }
+
+    /* Main Area */
+    .admin-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
+    .admin-topbar {
+      height: 64px;
+      background: var(--color-bg-surface);
+      border-bottom: 1px solid var(--color-border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-6);
+    }
+    .admin-content {
+      padding: var(--space-6);
+      flex: 1;
+    }
+
+    /* Stat Cards */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+    .stat-card {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      box-shadow: var(--shadow-sm);
+    }
+    .stat-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: var(--space-1);
+    }
+    .stat-val {
+      font-size: var(--font-size-3xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+    }
+    .stat-desc {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+      margin-top: var(--space-1);
+    }
+
+    /* Actions Bar */
+    .quick-actions {
+      display: flex;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+      flex-wrap: wrap;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0 var(--space-4);
+      min-height: 42px;
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .btn-primary { background: var(--color-primary); color: #FFF; }
+    .btn-accent { background: var(--color-accent); color: #FFF; }
+    .btn-wa { background: var(--color-wa); color: #FFF; }
+    .btn-outline { background: transparent; border-color: var(--color-border-default); color: var(--color-text-primary); }
+
+    /* Tables */
+    .card {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      margin-bottom: var(--space-6);
+      box-shadow: var(--shadow-sm);
+    }
+    .card-title {
+      font-size: var(--font-size-lg);
+      font-weight: bold;
+      margin-bottom: var(--space-4);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .table-wrap {
+      width: 100%;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: var(--font-size-sm);
+    }
+    th {
+      background: var(--color-bg-subtle);
+      padding: var(--space-3);
+      color: var(--color-text-secondary);
+      font-weight: 600;
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    td {
+      padding: var(--space-3);
+      border-bottom: 1px solid var(--color-border-subtle);
+      vertical-align: middle;
+    }
+    
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+    }
+    .badge-available { background: var(--color-status-available-bg); color: var(--color-status-available-text); }
+    .badge-booking { background: var(--color-status-booking-bg); color: var(--color-status-booking-text); }
+    .badge-lead-new { background: #FEF3C7; color: #78350F; border: 1px solid #FCD34D; }
+
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .admin-sidebar { width: 100%; }
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">
+      🚗 Bintang Mobil Admin
+    </div>
+    <ul class="sidebar-nav">
+      <li class="nav-item"><a href="dashboard.html" class="active">📊 Dashboard</a></li>
+      <li class="nav-item"><a href="mobil-list.html">🚗 Kelola Stok Mobil</a></li>
+      <li class="nav-item"><a href="leads.html">📥 Leads & Prospek (5 Baru)</a></li>
+      <li class="nav-item"><a href="konten.html">📝 Konten & Pengaturan</a></li>
+    </ul>
+    <div class="sidebar-footer">
+      <div style="color: #FFF; font-weight: bold; margin-bottom: 4px;">Admin Showroom</div>
+      <div>admin@bintangmobil.com</div>
+      <div style="margin-top: 8px;"><a href="login.html" style="color: #F87171;">Keluar (Logout)</a></div>
+    </div>
+  </aside>
+
+  <!-- Main View -->
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <div style="font-size: var(--font-size-base); font-weight: 600;">Ringkasan Operasional Showroom</div>
+      <a href="../pages/beranda.html" target="_blank" class="btn btn-outline" style="min-height: 36px; font-size: 12px;">🌐 Lihat Website Publik</a>
+    </header>
+
+    <div class="admin-content">
+      
+      <!-- Metrics Overview -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Total Unit Siap Jual</div>
+          <div class="stat-val">28 <span style="font-size: 14px; font-weight: normal; color: var(--color-wa);">Tersedia</span></div>
+          <div class="stat-desc">3 Unit Booking • 4 Unit Terjual</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Lead Masuk Belum Dihubungi</div>
+          <div class="stat-val" style="color: var(--color-accent);">5 Baru</div>
+          <div class="stat-desc">Perlu respon WhatsApp segera</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Pengajuan Tukar Tambah</div>
+          <div class="stat-val">8 Unit</div>
+          <div class="stat-desc">3 Sedang proses appraisal</div>
+        </div>
+
+        <div class="stat-card">
+          <div class="stat-label">Total Nilai Inventori</div>
+          <div class="stat-val" style="font-size: var(--font-size-2xl);">Rp 5,4 Miliar</div>
+          <div class="stat-desc">Berdasarkan harga cash OTR</div>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="quick-actions">
+        <a href="mobil-form.html" class="btn btn-primary">+ Tambah Mobil Baru</a>
+        <a href="leads.html" class="btn btn-accent">📥 Buka 5 Lead Baru</a>
+        <a href="konten.html" class="btn btn-outline">⚙️ Ubah Pengaturan No. WA</a>
+      </div>
+
+      <!-- Tabel Lead Terbaru Masuk -->
+      <div class="card">
+        <div class="card-title">
+          <span>Lead & Pertanyaan Masuk Terbaru</span>
+          <a href="leads.html" style="font-size: var(--font-size-xs); color: var(--color-primary);">Lihat Semua Lead →</a>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Waktu</th>
+                <th>Nama Pelanggan</th>
+                <th>No. WhatsApp</th>
+                <th>Tipe Minat</th>
+                <th>Unit yang Dituju</th>
+                <th>Status</th>
+                <th>Aksi Cepat</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>10 menit lalu</td>
+                <td><strong>Bambang S.</strong></td>
+                <td>0812-3456-7890</td>
+                <td>Simulasi Kredit</td>
+                <td>Toyota Avanza 1.3 G 2020</td>
+                <td><span class="badge badge-lead-new">Baru</span></td>
+                <td>
+                  <a href="https://wa.me/6281234567890" target="_blank" class="btn btn-wa" style="min-height: 32px; padding: 0 10px; font-size: 11px;">💬 Hubungi WA</a>
+                </td>
+              </tr>
+              <tr>
+                <td>45 menit lalu</td>
+                <td><strong>Hendra Wijaya</strong></td>
+                <td>0813-8899-1122</td>
+                <td>Tukar Tambah</td>
+                <td>Honda Brio RS 2021</td>
+                <td><span class="badge badge-lead-new">Baru</span></td>
+                <td>
+                  <a href="https://wa.me/6281388991122" target="_blank" class="btn btn-wa" style="min-height: 32px; padding: 0 10px; font-size: 11px;">💬 Hubungi WA</a>
+                </td>
+              </tr>
+              <tr>
+                <td>2 jam lalu</td>
+                <td><strong>Dewi Lestari</strong></td>
+                <td>0856-7788-9900</td>
+                <td>Kontak Umum</td>
+                <td>Tanya Pajak Pajero Dakar</td>
+                <td><span class="badge" style="background: #E2E8F0;">Sudah Dihubungi</span></td>
+                <td>
+                  <a href="leads.html" class="btn btn-outline" style="min-height: 32px; padding: 0 10px; font-size: 11px;">Detail</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+</body>
+</html>

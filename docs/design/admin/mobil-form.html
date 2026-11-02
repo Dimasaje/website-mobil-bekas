@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tambah / Ubah Unit Mobil — Bintang Mobil Admin</title>
+  <link rel="stylesheet" href="../tokens.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family-sans);
+      background-color: var(--color-bg-canvas);
+      color: var(--color-text-primary);
+      display: flex;
+      min-height: 100vh;
+    }
+    a { color: inherit; text-decoration: none; }
+
+    .admin-sidebar {
+      width: 250px;
+      background: #0F172A;
+      color: #94A3B8;
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .sidebar-header { padding: var(--space-5) var(--space-4); border-bottom: 1px solid #1E293B; color: #FFF; font-size: var(--font-size-base); font-weight: bold; }
+    .sidebar-nav { list-style: none; padding: var(--space-4) var(--space-2); display: flex; flex-direction: column; gap: 4px; flex-grow: 1; }
+    .nav-item a { display: flex; align-items: center; gap: var(--space-3); padding: 10px var(--space-3); border-radius: var(--radius-md); font-size: var(--font-size-sm); color: #94A3B8; }
+    .nav-item a:hover, .nav-item a.active { background: #1E293B; color: #FFF; }
+    .nav-item a.active { background: var(--color-primary); }
+
+    .admin-main { flex: 1; display: flex; flex-direction: column; overflow-x: hidden; }
+    .admin-topbar { height: 64px; background: var(--color-bg-surface); border-bottom: 1px solid var(--color-border-subtle); display: flex; align-items: center; justify-content: space-between; padding: 0 var(--space-6); }
+    .admin-content { padding: var(--space-6); max-width: 960px; }
+
+    .card {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      margin-bottom: var(--space-6);
+      box-shadow: var(--shadow-sm);
+    }
+    .card-title {
+      font-size: var(--font-size-lg);
+      font-weight: bold;
+      color: var(--color-primary);
+      margin-bottom: var(--space-4);
+      padding-bottom: var(--space-2);
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+      margin-bottom: var(--space-4);
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .form-label {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-text-primary);
+    }
+    .form-control {
+      min-height: 44px;
+      padding: 0 var(--space-3);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      background: var(--color-bg-surface);
+      outline: none;
+    }
+    .form-control:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-100);
+    }
+    textarea.form-control {
+      min-height: 100px;
+      padding: var(--space-3);
+      font-family: inherit;
+    }
+
+    /* Photo Upload & Reordering */
+    .upload-zone {
+      border: 2px dashed var(--color-border-default);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      text-align: center;
+      background: var(--color-bg-subtle);
+      cursor: pointer;
+      margin-bottom: var(--space-4);
+    }
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: var(--space-3);
+    }
+    .photo-item {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      position: relative;
+    }
+    .photo-thumb {
+      height: 95px;
+      background: #CBD5E1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+    }
+    .photo-badge-main {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      background: var(--color-primary);
+      color: #FFF;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: bold;
+    }
+    .photo-actions {
+      padding: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0 var(--space-5);
+      min-height: 48px;
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .btn-primary { background: var(--color-primary); color: #FFF; }
+    .btn-outline { background: transparent; border-color: var(--color-border-default); color: var(--color-text-primary); }
+
+    @media (max-width: 768px) {
+      body { flex-direction: column; }
+      .admin-sidebar { width: 100%; }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <aside class="admin-sidebar">
+    <div class="sidebar-header">🚗 Bintang Mobil Admin</div>
+    <ul class="sidebar-nav">
+      <li class="nav-item"><a href="dashboard.html">📊 Dashboard</a></li>
+      <li class="nav-item"><a href="mobil-list.html" class="active">🚗 Kelola Stok Mobil</a></li>
+      <li class="nav-item"><a href="leads.html">📥 Leads & Prospek</a></li>
+      <li class="nav-item"><a href="konten.html">📝 Konten & Pengaturan</a></li>
+    </ul>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-topbar">
+      <div><a href="mobil-list.html" style="color: var(--color-primary); font-size: 13px;">← Kembali ke Daftar Stok</a></div>
+      <div style="font-size: 13px; color: var(--color-text-muted);">Form Unit Mobil</div>
+    </header>
+
+    <div class="admin-content">
+      <h1 style="font-size: var(--font-size-2xl); font-weight: bold; margin-bottom: var(--space-6);">Tambah / Ubah Unit Mobil</h1>
+
+      <form>
+        <!-- 1. Informasi Utama Kendaraan -->
+        <div class="card">
+          <div class="card-title">1. Spesifikasi Dasar Kendaraan</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Merek</label>
+              <select class="form-control">
+                <option>Toyota</option>
+                <option>Honda</option>
+                <option>Daihatsu</option>
+                <option>Mitsubishi</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Model / Varian</label>
+              <input type="text" class="form-control" value="Avanza 1.3 G">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tahun Pembuatan</label>
+              <input type="number" class="form-control" value="2020">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Transmisi</label>
+              <select class="form-control">
+                <option>Manual</option>
+                <option>Matic (Otomatis)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Jarak Tempuh (Odometer km)</label>
+              <input type="number" class="form-control" value="42150">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Warna Kendaraan</label>
+              <input type="text" class="form-control" value="Hitam Metalik">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Plat Nomor Kendaraan</label>
+              <input type="text" class="form-control" value="B 1234 ABC">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Masa Berlaku Pajak STNK</label>
+              <input type="text" class="form-control" value="11/2026">
+            </div>
+          </div>
+        </div>
+
+        <!-- 2. Harga & Status Stok -->
+        <div class="card">
+          <div class="card-title">2. Harga, Skema Kredit & Status Stok</div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label">Harga Cash / Tunai OTR (Rp)</label>
+              <input type="number" class="form-control" value="178000000">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Estimasi DP Minimal (Rp)</label>
+              <input type="number" class="form-control" value="25000000">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Status Unit</label>
+              <select class="form-control">
+                <option>Tersedia (Ready)</option>
+                <option>Sedang Booking</option>
+                <option>Sudah Terjual</option>
+                <option>Draft (Tidak Tayang)</option>
+              </select>
+            </div>
+            <div class="form-group" style="justify-content: center;">
+              <label style="display: flex; align-items: center; gap: 8px; font-size: var(--font-size-sm); cursor: pointer; margin-top: 20px;">
+                <input type="checkbox" checked style="width: 18px; height: 18px;">
+                <span><strong>Tandai sebagai Unit Unggulan</strong> (Tampil di Beranda)</span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Upload & Urutan Foto Kendaraan -->
+        <div class="card">
+          <div class="card-title">3. Foto Unit Kendaraan (Bisa Diurutkan)</div>
+          
+          <div class="upload-zone">
+            <div style="font-size: 2rem;">📸</div>
+            <div style="font-weight: bold; margin-top: 4px;">Klik untuk Upload Foto Mobil</div>
+            <div style="font-size: 12px; color: var(--color-text-muted);">Sistem otomatis mengompres dan me-resize gambar. Format: JPG, PNG, WebP.</div>
+          </div>
+
+          <div class="photo-grid">
+            <!-- Foto 1 (Foto Utama) -->
+            <div class="photo-item">
+              <span class="photo-badge-main">Foto Utama (Cover)</span>
+              <div class="photo-thumb">Foto 1: Depan Serong</div>
+              <div class="photo-actions">
+                <span>#1</span>
+                <button type="button" style="color: red; border: none; background: none; cursor: pointer;">Hapus</button>
+              </div>
+            </div>
+
+            <!-- Foto 2 -->
+            <div class="photo-item">
+              <div class="photo-thumb">Foto 2: Samping</div>
+              <div class="photo-actions">
+                <button type="button" style="color: var(--color-primary); border: none; background: none; cursor: pointer; font-size: 10px;">Jadikan Cover</button>
+                <button type="button" style="color: red; border: none; background: none; cursor: pointer;">Hapus</button>
+              </div>
+            </div>
+
+            <!-- Foto 3 -->
+            <div class="photo-item">
+              <div class="photo-thumb">Foto 3: Interior</div>
+              <div class="photo-actions">
+                <button type="button" style="color: var(--color-primary); border: none; background: none; cursor: pointer; font-size: 10px;">Jadikan Cover</button>
+                <button type="button" style="color: red; border: none; background: none; cursor: pointer;">Hapus</button>
+              </div>
+            </div>
+
+            <!-- Foto 4 -->
+            <div class="photo-item">
+              <div class="photo-thumb">Foto 4: Mesin</div>
+              <div class="photo-actions">
+                <button type="button" style="color: var(--color-primary); border: none; background: none; cursor: pointer; font-size: 10px;">Jadikan Cover</button>
+                <button type="button" style="color: red; border: none; background: none; cursor: pointer;">Hapus</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Deskripsi & Catatan -->
+        <div class="card">
+          <div class="card-title">4. Catatan Kondisi & Deskripsi Penjual</div>
+          <div class="form-group">
+            <textarea class="form-control" rows="5">Tangan pertama dari baru, service record resmi. Bebas banjir dan tabrakan. Kaki-kaki senyap, AC sangat dingin. Siap pakai jarak jauh.</textarea>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: var(--space-3); margin-top: var(--space-6);">
+          <button type="button" class="btn btn-primary">Simpan & Publikasikan Unit</button>
+          <button type="button" class="btn btn-outline">Simpan sebagai Draft</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+</body>
+</html>
