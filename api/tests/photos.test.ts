@@ -226,4 +226,48 @@ describe("Admin Car Photos API (/api/admin/cars/:carId/photos)", () => {
     expect(remainingPhotos[0].id).toBe(firstPhotoId);
     expect(remainingPhotos[0].isPrimary).toBe(true);
   });
+
+  it("rejects upload without a file", async () => {
+    const form = new FormData();
+    form.set("keterangan", "tanpa berkas");
+
+    const res = await app.request(`/api/admin/cars/${testCarId}/photos`, {
+      method: "POST",
+      headers: { Cookie: adminCookie },
+      body: form,
+    });
+
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as {
+      success: boolean;
+      error: { code: string };
+    };
+    expect(body.success).toBe(false);
+    expect(body.error.code).toBe("VALIDATION_ERROR");
+  });
+
+  it("rejects files larger than 10MB", async () => {
+    const oversized = new File(
+      [new Uint8Array(10 * 1024 * 1024 + 1)],
+      "besar.png",
+      { type: "image/png" },
+    );
+    const form = new FormData();
+    form.set("file", oversized);
+
+    const res = await app.request(`/api/admin/cars/${testCarId}/photos`, {
+      method: "POST",
+      headers: { Cookie: adminCookie },
+      body: form,
+    });
+
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as {
+      success: boolean;
+      error: { code: string; message: string };
+    };
+    expect(body.success).toBe(false);
+    expect(body.error.code).toBe("UPLOAD_FAILED");
+    expect(body.error.message).toContain("10MB");
+  });
 });

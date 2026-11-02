@@ -261,5 +261,23 @@ describe("Leads API (/api/leads & /api/admin/leads)", () => {
       });
       expect(res.status).toBe(404);
     });
+
+    it("rejects invalid admin lead updates and unauthenticated writes", async () => {
+      const [lead] = await db.select().from(schema.leads).limit(1);
+
+      const invalidRes = await app.request(`/api/admin/leads/${lead.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Cookie: adminCookie },
+        body: JSON.stringify({ status: "status-tidak-valid" }),
+      });
+      expect(invalidRes.status).toBe(400);
+
+      const noAuthRes = await app.request(`/api/admin/leads/${lead.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: "selesai" }),
+      });
+      expect(noAuthRes.status).toBe(401);
+    });
   });
 });

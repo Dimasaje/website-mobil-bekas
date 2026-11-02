@@ -145,4 +145,27 @@ describe("Admin Authentication (/api/auth & /api/admin/*)", () => {
     };
     expect(body.error.code).toBe("TOO_MANY_REQUESTS");
   });
+
+  it("rejects login with invalid payload (bad email format, empty password)", async () => {
+    const badEmailRes = await app.request("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: "bukan-email", password: "Admin123!" }),
+    });
+    expect(badEmailRes.status).toBe(400);
+
+    const emptyPasswordRes = await app.request("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: "admin@bintangmobil.com", password: "" }),
+    });
+    expect(emptyPasswordRes.status).toBe(400);
+
+    const body = (await emptyPasswordRes.json()) as {
+      success: boolean;
+      error: { code: string };
+    };
+    expect(body.success).toBe(false);
+    expect(body.error.code).toBe("VALIDATION_ERROR");
+  });
 });
