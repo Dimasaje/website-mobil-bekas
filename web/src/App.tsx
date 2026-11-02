@@ -2,13 +2,9 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Layout } from "./components/layout/Layout";
 import { CarDetailPage } from "./pages/CarDetailPage";
 import { CatalogPage } from "./pages/CatalogPage";
+import { CreditPage } from "./pages/CreditPage";
 import { HomePage } from "./pages/HomePage";
-import {
-  ContactPage,
-  CreditPage,
-  TestimonialsPage,
-  TradeInPage,
-} from "./pages/OtherPages";
+import { ContactPage, TestimonialsPage, TradeInPage } from "./pages/OtherPages";
 import { PageNotFound } from "./pages/PageNotFound";
 
 export function App() {
