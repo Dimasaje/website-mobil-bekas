@@ -2,7 +2,11 @@ import { describe, expect, it } from "bun:test";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import { MemoryRouter } from "react-router-dom";
-import { calculateCredit, CreditPage } from "../src/pages/CreditPage";
+import {
+  calculateCredit,
+  CreditPage,
+  resolveDefaultDpPercent,
+} from "../src/pages/CreditPage";
 
 describe("CreditPage & calculateCredit (T-23)", () => {
   it("calculates credit installment accurately with flat rate formula", () => {
@@ -74,5 +78,26 @@ describe("CreditPage & calculateCredit (T-23)", () => {
     expect(html).toContain("HASIL ESTIMASI SEMENTARA");
     expect(html).toContain("DISCLAIMER");
     expect(html).toContain("Kirim Hasil Simulasi ke WhatsApp");
+  });
+
+  it("resolves default DP percent from site settings with sane fallback", () => {
+    expect(resolveDefaultDpPercent(30)).toBe(30);
+    expect(resolveDefaultDpPercent("25")).toBe(25);
+    expect(resolveDefaultDpPercent(undefined)).toBe(20);
+    expect(resolveDefaultDpPercent(null)).toBe(20);
+    expect(resolveDefaultDpPercent(0)).toBe(20);
+    expect(resolveDefaultDpPercent("abc")).toBe(20);
+  });
+
+  it("wraps DP preset pills so mobile 375px has no horizontal overflow", () => {
+    const html = renderToString(
+      React.createElement(MemoryRouter, null, React.createElement(CreditPage)),
+    );
+
+    // Row must wrap instead of overflowing the card
+    expect(html).toContain("flex flex-wrap gap-2 mt-2 text-xs");
+    for (const pct of [15, 20, 25, 30, 40, 50]) {
+      expect(html).toMatch(new RegExp(`>${pct}(<!-- -->)?%</button>`));
+    }
   });
 });

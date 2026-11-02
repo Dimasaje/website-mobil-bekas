@@ -17,8 +17,9 @@ export function Layout() {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
   const { pathname } = useLocation();
 
-  // Detail mobil punya sticky bar CTA sendiri di mobile, jadi FloatingCTA disembunyikan
-  const isCarDetail = /^\/katalog\/[^/]+$/.test(pathname);
+  // Halaman dengan CTA mobile sendiri (detail mobil & simulasi kredit)
+  // -> FloatingCTA disembunyikan di ponsel agar tidak menutupi kontrol.
+  const hideMobileFab = /^\/(katalog\/[^/]+|simulasi-kredit)$/.test(pathname);
 
   useEffect(() => {
     let isMounted = true;
@@ -58,7 +59,7 @@ export function Layout() {
         whatsappNumber={settings?.whatsappNumber}
         phoneNumber={settings?.phoneNumber || undefined}
         showroomName={settings?.showroomName}
-        className={isCarDetail ? "max-lg:hidden" : ""}
+        className={hideMobileFab ? "max-lg:hidden" : ""}
       />
     </div>
   );

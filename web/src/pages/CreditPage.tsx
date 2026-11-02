@@ -49,6 +49,14 @@ export function calculateCredit({
   };
 }
 
+export function resolveDefaultDpPercent(
+  value?: number | string | null,
+  fallback = 20,
+): number {
+  const pct = Number(value);
+  return Number.isFinite(pct) && pct > 0 ? pct : fallback;
+}
+
 export function CreditPage() {
   const [searchParams] = useSearchParams();
   const { settings: layoutSettings } = useLayoutSettings();
@@ -62,9 +70,9 @@ export function CreditPage() {
     ? Number(layoutSettings.defaultInterestRate)
     : 8.5;
 
-  const defaultDpPercent = layoutSettings?.minDownPaymentPercent
-    ? Number(layoutSettings.minDownPaymentPercent)
-    : 20;
+  const defaultDpPercent = resolveDefaultDpPercent(
+    layoutSettings?.minDownPaymentPercent,
+  );
 
   // Form states
   const [carName, setCarName] = useState(initialCarName);
@@ -73,6 +81,7 @@ export function CreditPage() {
   const [dpAmount, setDpAmount] = useState(
     Math.round((initialPriceParam * defaultDpPercent) / 100),
   );
+  const [dpTouched, setDpTouched] = useState(false);
   const [tenorMonths, setTenorMonths] = useState(48); // 4 years default
   const [interestRate, setInterestRate] = useState(defaultRate);
 
@@ -83,6 +92,15 @@ export function CreditPage() {
     }
   }, [layoutSettings?.defaultInterestRate]);
 
+  // Sync default DP from site settings after settings load,
+  // unless the user already picked a DP manually.
+  useEffect(() => {
+    if (dpTouched || !layoutSettings?.minDownPaymentPercent) return;
+    const pct = resolveDefaultDpPercent(layoutSettings.minDownPaymentPercent);
+    setDpPercent(pct);
+    setDpAmount(Math.round((price * pct) / 100));
+  }, [layoutSettings?.minDownPaymentPercent, dpTouched, price]);
+
   // When price changes, recalculate DP based on percent
   const handlePriceChange = (newPrice: number) => {
     const p = Math.max(0, newPrice);
@@ -92,6 +110,7 @@ export function CreditPage() {
 
   // When DP Amount manually changed
   const handleDpAmountChange = (newDp: number) => {
+    setDpTouched(true);
     const validDp = Math.max(0, newDp);
     setDpAmount(validDp);
     if (price > 0) {
@@ -102,6 +121,7 @@ export function CreditPage() {
 
   // When DP Percent preset clicked
   const handleDpPercentSelect = (pct: number) => {
+    setDpTouched(true);
     setDpPercent(pct);
     setDpAmount(Math.round((price * pct) / 100));
   };
@@ -251,7 +271,7 @@ Bisa dibantu informasi syarat berkas dan proses survei leasing-nya? Terima kasih
               max={price}
             />
             {/* DP Preset Pills */}
-            <div className="flex gap-2 mt-2 text-xs">
+            <div className="flex flex-wrap gap-2 mt-2 text-xs">
               {[15, 20, 25, 30, 40, 50].map((pct) => (
                 <button
                   key={pct}
