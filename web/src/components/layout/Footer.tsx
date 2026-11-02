@@ -79,6 +79,14 @@ export function Footer({
               </li>
               <li>
                 <Link
+                  to="/artikel"
+                  className="hover:text-white transition-colors"
+                >
+                  Artikel & Tips Otomotif
+                </Link>
+              </li>
+              <li>
+                <Link
                   to="/kontak"
                   className="hover:text-white transition-colors"
                 >

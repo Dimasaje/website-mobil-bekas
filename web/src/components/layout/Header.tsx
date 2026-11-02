@@ -19,6 +19,7 @@ export function Header({
     { to: "/simulasi-kredit", label: "Simulasi Kredit" },
     { to: "/tukar-tambah", label: "Tukar Tambah" },
     { to: "/testimoni", label: "Testimoni" },
+    { to: "/artikel", label: "Artikel" },
     { to: "/kontak", label: "Kontak" },
   ];
 
