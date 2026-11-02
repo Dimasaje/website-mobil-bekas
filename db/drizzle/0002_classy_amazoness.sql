@@ -1,0 +1,2 @@
+ALTER TABLE "site_settings" ADD COLUMN "hero_title" text DEFAULT 'Temukan Mobil Bekas Impian Anda';--> statement-breakpoint
+ALTER TABLE "site_settings" ADD COLUMN "hero_subtitle" text DEFAULT 'Pilihan terlengkap, kondisi prima terjamin, bebas banjir dan tabrak.';

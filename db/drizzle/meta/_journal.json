@@ -15,6 +15,13 @@
       "when": 1793598730387,
       "tag": "0001_spicy_glorian",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793600997816,
+      "tag": "0002_classy_amazoness",
+      "breakpoints": true
     }
   ]
 }

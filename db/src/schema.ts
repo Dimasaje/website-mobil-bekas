@@ -180,6 +180,10 @@ export const siteSettings = pgTable("site_settings", {
     .default("Jl. Raya Otista No. 123, Jakarta Timur"),
   mapsUrl: text("maps_url"),
   openingHours: text("opening_hours").default("Senin - Minggu: 08:30 - 18:00"),
+  heroTitle: text("hero_title").default("Temukan Mobil Bekas Impian Anda"),
+  heroSubtitle: text("hero_subtitle").default(
+    "Pilihan terlengkap, kondisi prima terjamin, bebas banjir dan tabrak.",
+  ),
   defaultInterestRate: numeric("default_interest_rate", {
     precision: 4,
     scale: 2,

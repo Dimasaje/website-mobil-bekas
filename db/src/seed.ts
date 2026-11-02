@@ -45,6 +45,9 @@ export async function runSeed() {
         "Jl. Raya Otista No. 123, Bidara Cina, Jatinegara, Jakarta Timur",
       mapsUrl: "https://maps.google.com/?q=Jakarta+Timur",
       openingHours: "Senin - Minggu: 08:30 - 18:00 WIB",
+      heroTitle: "Temukan Mobil Bekas Impian Anda",
+      heroSubtitle:
+        "Pilihan terlengkap, kondisi prima terjamin, bebas banjir dan tabrak.",
       defaultInterestRate: "8.50",
       minDownPaymentPercent: "20.00",
     })

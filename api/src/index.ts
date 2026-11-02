@@ -11,6 +11,18 @@ import { authRouter } from "./routes/auth";
 import { carsRouter } from "./routes/cars";
 import { healthRouter } from "./routes/health";
 import { adminCarsRouter } from "./routes/admin-cars";
+import {
+  adminArticlesRouter,
+  adminPromosRouter,
+  adminSettingsRouter,
+  adminTestimonialsRouter,
+} from "./routes/admin-content";
+import {
+  publicArticlesRouter,
+  publicPromosRouter,
+  publicSettingsRouter,
+  publicTestimonialsRouter,
+} from "./routes/content";
 import { adminLeadsRouter, leadsRouter } from "./routes/leads";
 import { defaultStorage } from "./services/storage";
 
@@ -34,6 +46,10 @@ api.route("/health", healthRouter);
 api.route("/auth", authRouter);
 api.route("/cars", carsRouter);
 api.route("/leads", leadsRouter);
+api.route("/promos", publicPromosRouter);
+api.route("/testimonials", publicTestimonialsRouter);
+api.route("/articles", publicArticlesRouter);
+api.route("/settings", publicSettingsRouter);
 
 api.get("/db-check", async (c) => {
   try {
@@ -61,6 +77,10 @@ adminApi.use("*", requireAdminAuth);
 adminApi.route("/auth", authRouter);
 adminApi.route("/cars", adminCarsRouter);
 adminApi.route("/leads", adminLeadsRouter);
+adminApi.route("/promos", adminPromosRouter);
+adminApi.route("/testimonials", adminTestimonialsRouter);
+adminApi.route("/articles", adminArticlesRouter);
+adminApi.route("/settings", adminSettingsRouter);
 adminApi.get("/dashboard", (c) => {
   const admin = c.get("admin");
   return c.json({
