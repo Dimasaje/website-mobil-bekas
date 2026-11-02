@@ -98,7 +98,9 @@ SEED_ON_START=true docker compose up -d
 
 Buka `http://localhost`. Perlu diperhatikan:
 
-- Port 80 dan 443 harus bebas. Kalau dipakai (IIS, Skype, nginx, layanan lain), ubah pemetaan port `proxy` di `docker-compose.yml` menjadi `"8080:80"` dan `"8443:443"`, lalu set `SITE_DOMAIN=http://localhost:8080` dan `SITE_URL=http://localhost:8080`.
+- Port 80 dan 443 harus bebas. Kalau dipakai (IIS, Skype, nginx, layanan lain), ubah pemetaan port `proxy` di `docker-compose.yml` menjadi `"8080:80"` dan `"8443:443"`, lalu set `SITE_DOMAIN=http://localhost:8080` dan `SITE_URL=http://localhost:8080`. Kalau `SITE_DOMAIN` memuat port, Caddy mendengarkan port itu *di dalam* container, jadi pemetaannya harus `"8080:8080"`.
+- Jangan menambahkan port lewat file override terpisah: Compose **menggabungkan** daftar `ports`, bukan menimpanya, sehingga `"443:443"` lama tetap ikut dan gagal bind. Ubah `docker-compose.yml` langsung atau jalankan proxy sebagai container terpisah di network `website-mobil-bekas_default`.
+- Cek status setelah start: `docker compose ps` harus `Up` (bukan `Restarting`) dan `docker compose logs app` menampilkan `Migrasi selesai!` lalu `Started server: http://localhost:3001`. Uji cepat: `curl -s localhost/api/health` → `{"success":true,...,"database":"ok"}`.
 - `docker compose build` memerlukan Docker Desktop (Windows/macOS) yang sudah berjalan; kalau muncul "Docker Desktop is unable to start", restart mesin (instalasi pertama butuh WSL2 siap) atau jalankan Docker Desktop lalu tunggu sampai statusnya *running*.
 - Data yang dibuat saat uji lokal hilang kalau volume dihapus: `docker compose down -v`.
 - `.env` hasil uji lokal jangan dipakai di VPS — buat ulang dari `.env.production.example`.
