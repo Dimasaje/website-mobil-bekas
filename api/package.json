@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun --watch src/index.ts",
-    "build": "bun build src/index.ts --outdir dist --target bun",
+    "build": "bun build src/index.ts --outdir dist --target bun --external sharp",
     "lint": "bun fmt --check",
     "typecheck": "tsc --noEmit",
     "test": "bun test"
