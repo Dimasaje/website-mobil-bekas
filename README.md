@@ -76,3 +76,20 @@ Platform jual beli mobil bekas dengan arsitektur monorepo berbasis Bun.
 | `bun run lint`      | Memeriksa format dan style kode                        |
 | `bun run typecheck` | Menjalankan pemeriksaan tipe TypeScript                |
 | `bun test`          | Menjalankan seluruh unit test dengan Bun               |
+
+## Deployment Produksi
+
+Deploy memakai Docker Compose (app Bun, PostgreSQL, Caddy untuk HTTPS) dengan migrate otomatis saat rilis. Panduan lengkap: [`docs/deploy.md`](docs/deploy.md).
+
+```bash
+cp .env.production.example .env   # isi domain, SITE_URL, password
+docker compose build
+SEED_ON_START=true docker compose up -d
+```
+
+Backup dan restore:
+
+```bash
+./scripts/backup.sh
+./scripts/restore.sh backups/db-<stamp>.sql.gz
+```

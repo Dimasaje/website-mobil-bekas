@@ -1,0 +1,5 @@
+# Shell script dan konfigurasi container harus LF; CRLF membuat script gagal di container Linux.
+*.sh text eol=lf
+Dockerfile text eol=lf
+Caddyfile text eol=lf
+docker-compose.yml text eol=lf

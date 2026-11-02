@@ -1,0 +1,62 @@
+name: website-mobil-bekas
+
+services:
+  db:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD wajib diisi di .env}
+      POSTGRES_DB: ${POSTGRES_DB:-website_mobil_bekas}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-website_mobil_bekas}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+      # Karakter khusus pada password harus di-URL-encode (@ jadi %40).
+      DATABASE_URL: postgres://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-website_mobil_bekas}
+      SITE_URL: ${SITE_URL:?SITE_URL wajib diisi, mis. https://bintangmobil.co.id}
+      SHOWROOM_NAME: ${SHOWROOM_NAME:-Bintang Mobil}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@bintangmobil.com}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      ADMIN_NAME: ${ADMIN_NAME:-Admin Bintang Mobil}
+      SEED_ON_START: ${SEED_ON_START:-false}
+    volumes:
+      - uploads:/app/uploads
+
+  proxy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:?SITE_DOMAIN wajib diisi, mis. bintangmobil.co.id}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+volumes:
+  pgdata:
+  uploads:
+  caddy_data:
+  caddy_config:

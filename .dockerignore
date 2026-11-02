@@ -1,0 +1,14 @@
+node_modules
+**/node_modules
+web/dist
+api/dist
+uploads
+backups
+.git
+.github
+.env
+.env.*
+!.env.example
+!.env.production.example
+*.log
+*.tsbuildinfo

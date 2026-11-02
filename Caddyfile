@@ -1,0 +1,6 @@
+# Reverse proxy HTTPS. Caddy menerbitkan dan memperbarui sertifikat Let's Encrypt
+# otomatis begitu DNS domain sudah mengarah ke VPS dan port 80/443 terbuka.
+{$SITE_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy app:3001
+}
