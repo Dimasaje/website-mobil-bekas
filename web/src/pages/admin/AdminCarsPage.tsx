@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import {
   ApiClientError,
   apiClient,
@@ -37,11 +37,17 @@ export function formatPrice(value: number | string): string {
 }
 
 export function AdminCarsPage() {
+  const [searchParams] = useSearchParams();
+  const initialStatus = searchParams.get("status");
   const [cars, setCars] = useState<AdminCar[]>([]);
   const [brands, setBrands] = useState<Array<{ id: string; name: string }>>([]);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [status, setStatus] = useState<CarStatus | "">("");
+  const [status, setStatus] = useState<CarStatus | "">(
+    initialStatus && initialStatus in STATUS_LABELS
+      ? (initialStatus as CarStatus)
+      : "",
+  );
   const [brandId, setBrandId] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
