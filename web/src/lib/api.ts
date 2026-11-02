@@ -35,6 +35,18 @@ export class ApiClientError extends Error {
   }
 }
 
+// Handler global untuk respons 401. Layout admin mendaftarkannya agar setiap
+// mutasi yang kehilangan sesi langsung diarahkan ke halaman login.
+type UnauthorizedHandler = () => void;
+
+let unauthorizedHandler: UnauthorizedHandler | null = null;
+
+export function setUnauthorizedHandler(
+  handler: UnauthorizedHandler | null,
+): void {
+  unauthorizedHandler = handler;
+}
+
 export async function request<T>(
   endpoint: string,
   options: RequestInit = {},
@@ -65,6 +77,8 @@ export async function request<T>(
   const data = isJson ? await response.json() : null;
 
   if (!response.ok) {
+    if (response.status === 401) unauthorizedHandler?.();
+
     const errorMsg =
       data?.error?.message || `HTTP ${response.status}: ${response.statusText}`;
     const errorCode = data?.error?.code || `HTTP_${response.status}`;

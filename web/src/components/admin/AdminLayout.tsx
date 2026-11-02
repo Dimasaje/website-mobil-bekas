@@ -6,7 +6,12 @@ import {
   useNavigate,
   useOutletContext,
 } from "react-router-dom";
-import { ApiClientError, apiClient, type AdminUser } from "../../lib/api";
+import {
+  ApiClientError,
+  apiClient,
+  setUnauthorizedHandler,
+  type AdminUser,
+} from "../../lib/api";
 
 export interface AdminLayoutContext {
   user: AdminUser;
@@ -73,6 +78,20 @@ export function AdminLayout() {
   useEffect(() => {
     setMenuOpen(false);
   }, [pathname]);
+
+  // Mutasi admin yang kena 401 di tengah form (simpan mobil, PATCH lead,
+  // pengaturan, CRUD konten) diarahkan ke login dengan notice sesi berakhir,
+  // bukan menampilkan pesan error mentah dari API.
+  useEffect(() => {
+    setUnauthorizedHandler(() => {
+      navigate(
+        `/admin/login?redirect=${encodeURIComponent(pathname)}&expired=1`,
+        { replace: true },
+      );
+    });
+
+    return () => setUnauthorizedHandler(null);
+  }, [navigate, pathname]);
 
   const handleLogout = async () => {
     setLogoutError(null);
