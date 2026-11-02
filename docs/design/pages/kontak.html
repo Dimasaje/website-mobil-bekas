@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hubungi Kami & Lokasi Showroom — Bintang Mobil Bekas</title>
+  <link rel="stylesheet" href="../tokens.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family-sans);
+      background-color: var(--color-bg-canvas);
+      color: var(--color-text-primary);
+      line-height: var(--line-height-normal);
+      padding-bottom: 90px;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1040px; margin: 0 auto; padding: 0 var(--space-4); }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      background: var(--color-bg-surface);
+      border-bottom: 1px solid var(--color-border-subtle);
+      z-index: var(--z-sticky);
+      box-shadow: var(--shadow-sm);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .brand-logo { font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-primary); }
+    .nav-links { display: flex; gap: var(--space-5); list-style: none; }
+    .nav-links a { font-size: var(--font-size-sm); color: var(--color-text-secondary); padding: 8px 0; }
+    .nav-links a.active { color: var(--color-primary); font-weight: 600; }
+
+    .breadcrumb { padding: var(--space-4) 0; font-size: var(--font-size-xs); color: var(--color-text-muted); display: flex; gap: var(--space-2); }
+
+    .contact-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-8);
+      margin-top: var(--space-4);
+      align-items: start;
+    }
+
+    .card {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-sm);
+    }
+    .card h1, .card h2 {
+      font-size: var(--font-size-2xl);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-2);
+    }
+    .card p.sub {
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-sm);
+      margin-bottom: var(--space-6);
+    }
+
+    .info-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+    .info-item {
+      display: flex;
+      gap: var(--space-3);
+      align-items: flex-start;
+    }
+    .info-icon {
+      font-size: 1.5rem;
+      color: var(--color-primary);
+      flex-shrink: 0;
+    }
+    .info-label {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+    .info-val {
+      font-size: var(--font-size-base);
+      color: var(--color-text-primary);
+      font-weight: 500;
+    }
+
+    .map-preview {
+      width: 100%;
+      height: 220px;
+      background: var(--color-bg-subtle);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--color-border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: var(--space-2);
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    /* Form */
+    .form-group {
+      margin-bottom: var(--space-4);
+    }
+    .form-label {
+      display: block;
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-1);
+    }
+    .form-control {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 var(--space-3);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      background: var(--color-bg-surface);
+      outline: none;
+    }
+    textarea.form-control {
+      min-height: 100px;
+      padding: var(--space-3);
+      font-family: inherit;
+    }
+    .form-control:focus {
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-100);
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      width: 100%;
+      min-height: 50px;
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-bold);
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+    }
+    .btn-primary { background: var(--color-primary); color: #FFF; }
+    .btn-wa { background: var(--color-wa); color: #FFF; margin-top: var(--space-3); }
+
+    @media (max-width: 800px) {
+      .contact-layout { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="beranda.html" class="brand-logo">🚗 <span>Bintang Mobil</span></a>
+      <ul class="nav-links">
+        <li><a href="beranda.html">Beranda</a></li>
+        <li><a href="katalog.html">Katalog Mobil</a></li>
+        <li><a href="simulasi-kredit.html">Simulasi Kredit</a></li>
+        <li><a href="tukar-tambah.html">Tukar Tambah</a></li>
+        <li><a href="kontak.html" class="active">Kontak</a></li>
+      </ul>
+      <a href="https://wa.me/6281298765432" target="_blank" class="btn-wa" style="width: auto; min-height: 38px; padding: 0 14px; font-size: 14px; margin-top: 0;">💬 Chat WA</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav class="breadcrumb">
+      <a href="beranda.html">Beranda</a>
+      <span>›</span>
+      <span style="color: var(--color-text-primary); font-weight: 600;">Kontak & Lokasi Showroom</span>
+    </nav>
+
+    <div class="contact-layout">
+      <!-- Info Showroom & Peta -->
+      <section class="card">
+        <h1>Kunjungi Showroom Kami</h1>
+        <p class="sub">Silakan datang langsung untuk melihat unit, test drive gratis, atau konsultasi pembiayaan secara tatap muka.</p>
+
+        <div class="info-list">
+          <div class="info-item">
+            <span class="info-icon">📍</span>
+            <div>
+              <div class="info-label">Alamat Lengkap</div>
+              <div class="info-val">Jl. Otista Raya No. 45, Bidara Cina, Jatinegara, Jakarta Timur 13330</div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="info-icon">🕒</span>
+            <div>
+              <div class="info-label">Jam Operasional</div>
+              <div class="info-val">Buka Setiap Hari: 09.00 - 18.00 WIB (Sabtu & Minggu Tetap Buka)</div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="info-icon">📞</span>
+            <div>
+              <div class="info-label">Telepon Showroom</div>
+              <div class="info-val">(021) 8590-1234</div>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span class="info-icon">💬</span>
+            <div>
+              <div class="info-label">Konsultasi WhatsApp (24 Jam)</div>
+              <div class="info-val">0812-9876-5432</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="map-preview">
+          <span style="font-size: 2rem;">🗺️</span>
+          <span>Peta Lokasi Google Maps: Bintang Mobil Bekas</span>
+          <a href="https://maps.google.com" target="_blank" style="color: var(--color-primary); font-weight: 600; text-decoration: underline;">Buka di Google Maps →</a>
+        </div>
+      </section>
+
+      <!-- Form Pertanyaan Cepat -->
+      <section class="card">
+        <h2>Tinggalkan Pesan</h2>
+        <p class="sub">Punya pertanyaan seputar unit tertentu atau syarat kredit? Kami akan membalas via WhatsApp dalam hitungan menit.</p>
+
+        <form>
+          <div class="form-group">
+            <label class="form-label">Nama Lengkap</label>
+            <input type="text" class="form-control" placeholder="Nama Anda" value="Budi Santoso">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nomor WhatsApp Aktif</label>
+            <input type="tel" class="form-control" placeholder="08xxxxxxxxxx" value="08123456789">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Pesan / Mobil yang Ditanyakan</label>
+            <textarea class="form-control" placeholder="Contoh: Apakah mobil Avanza 2020 hitam masih ada? Bisa bantu hitung DP Rp 20 juta?"></textarea>
+          </div>
+
+          <button type="button" class="btn btn-primary">Kirim Pesan</button>
+
+          <a href="https://wa.me/6281298765432?text=Halo%20Bintang%20Mobil,%20saya%20ingin%20tanya%20informasi%20stok" target="_blank" class="btn btn-wa">
+            💬 Langsung Chat via WhatsApp Sales
+          </a>
+        </form>
+      </section>
+    </div>
+  </div>
+
+</body>
+</html>

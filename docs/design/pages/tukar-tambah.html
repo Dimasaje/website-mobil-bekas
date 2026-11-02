@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tukar Tambah & Jual Mobil Bekas — Bintang Mobil</title>
+  <link rel="stylesheet" href="../tokens.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family-sans);
+      background-color: var(--color-bg-canvas);
+      color: var(--color-text-primary);
+      line-height: var(--line-height-normal);
+      padding-bottom: 90px;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 960px; margin: 0 auto; padding: 0 var(--space-4); }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      background: var(--color-bg-surface);
+      border-bottom: 1px solid var(--color-border-subtle);
+      z-index: var(--z-sticky);
+      box-shadow: var(--shadow-sm);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .brand-logo { font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-primary); }
+    .nav-links { display: flex; gap: var(--space-5); list-style: none; }
+    .nav-links a { font-size: var(--font-size-sm); color: var(--color-text-secondary); padding: 8px 0; }
+    .nav-links a.active { color: var(--color-primary); font-weight: 600; }
+
+    .breadcrumb { padding: var(--space-4) 0; font-size: var(--font-size-xs); color: var(--color-text-muted); display: flex; gap: var(--space-2); }
+
+    .card {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-xl);
+      padding: var(--space-8);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: var(--space-8);
+    }
+    .card h1 { font-size: var(--font-size-2xl); color: var(--color-text-primary); margin-bottom: var(--space-2); }
+    .card p.desc { color: var(--color-text-secondary); font-size: var(--font-size-sm); margin-bottom: var(--space-6); }
+
+    .form-section-title {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      margin-bottom: var(--space-4);
+      padding-bottom: var(--space-2);
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-4);
+      margin-bottom: var(--space-6);
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+    .form-label {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+    }
+    .form-control {
+      min-height: 48px;
+      padding: 0 var(--space-3);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      background: var(--color-bg-surface);
+      outline: none;
+    }
+    .form-control:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-100); }
+    .form-control.error { border-color: var(--color-feedback-error); box-shadow: 0 0 0 3px var(--color-feedback-error-bg); }
+    .error-msg { font-size: var(--font-size-xs); color: var(--color-feedback-error); font-weight: 500; }
+
+    .upload-box {
+      border: 2px dashed var(--color-border-default);
+      border-radius: var(--radius-md);
+      padding: var(--space-6);
+      text-align: center;
+      background: var(--color-bg-subtle);
+      cursor: pointer;
+    }
+    .upload-box:hover { border-color: var(--color-primary); }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      min-height: 50px;
+      padding: 0 var(--space-6);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-bold);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      border: none;
+    }
+    .btn-accent { background: var(--color-accent); color: #FFF; width: 100%; }
+    .btn-wa { background: var(--color-wa); color: #FFF; text-decoration: none; }
+
+    /* Alert Boxes (State Demo) */
+    .alert {
+      padding: var(--space-4);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-6);
+      font-size: var(--font-size-sm);
+      display: flex;
+      gap: var(--space-3);
+      align-items: flex-start;
+    }
+    .alert-success { background: var(--color-feedback-success-bg); color: var(--color-feedback-success-text); border: 1px solid var(--color-status-available-border); }
+    .alert-error { background: var(--color-feedback-error-bg); color: var(--color-feedback-error-text); border: 1px solid #FCA5A5; }
+
+    @media (max-width: 640px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="beranda.html" class="brand-logo">🚗 <span>Bintang Mobil</span></a>
+      <ul class="nav-links">
+        <li><a href="beranda.html">Beranda</a></li>
+        <li><a href="katalog.html">Katalog Mobil</a></li>
+        <li><a href="simulasi-kredit.html">Simulasi Kredit</a></li>
+        <li><a href="tukar-tambah.html" class="active">Tukar Tambah</a></li>
+        <li><a href="kontak.html">Kontak</a></li>
+      </ul>
+      <a href="https://wa.me/6281298765432" target="_blank" class="btn-wa" style="min-height: 38px; padding: 0 14px; font-size: 14px; border-radius: 8px;">💬 Chat WA</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav class="breadcrumb">
+      <a href="beranda.html">Beranda</a>
+      <span>›</span>
+      <span style="color: var(--color-text-primary); font-weight: 600;">Formulir Tukar Tambah & Jual Mobil</span>
+    </nav>
+
+    <!-- State Demo 1: Sukses Terkirim (Preview) -->
+    <div class="alert alert-success">
+      <span style="font-size: 1.25rem;">✓</span>
+      <div>
+        <strong>Permintaan Penilaian Berhasil Diterima!</strong><br>
+        Estimasi harga taksiran awal akan kami kirimkan ke nomor WhatsApp Anda dalam 15-30 menit.
+        <div style="margin-top: 8px;">
+          <a href="https://wa.me/6281298765432?text=Halo%20saya%20sudah%20mengirim%20form%20tukar%20tambah" class="btn btn-wa" style="display: inline-flex; min-height: 36px; padding: 0 12px; font-size: 12px; border-radius: 6px;">
+            💬 Lanjut Konfirmasi ke WhatsApp Sales
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Form Container -->
+    <div class="card">
+      <h1>Tukar Tambah Mobil Lama Anda dengan Harga Fair</h1>
+      <p class="desc">Isi rincian mobil Anda sekarang. Tim appraisal kami akan melakukan taksiran harga secara transparan dan cepat.</p>
+
+      <form>
+        <!-- Data Mobil Lama -->
+        <div class="form-section-title">1. Data Mobil yang Mau Dijual / Ditukar</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Merek Mobil</label>
+            <input type="text" class="form-control" placeholder="Contoh: Toyota, Honda, Daihatsu" value="Toyota">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Model / Varian</label>
+            <input type="text" class="form-control" placeholder="Contoh: Avanza 1.3 G" value="Avanza 1.3 G">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tahun Pembuatan</label>
+            <input type="number" class="form-control" placeholder="Contoh: 2017" value="2017">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Transmisi</label>
+            <select class="form-control">
+              <option>Manual</option>
+              <option>Matic (Otomatis)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Jarak Tempuh (Kilometer)</label>
+            <input type="text" class="form-control" placeholder="Contoh: 65.000 km">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Ekspektasi Harga (Opsional)</label>
+            <input type="text" class="form-control" placeholder="Rp">
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: var(--space-6);">
+          <label class="form-label">Foto Mobil (Minimal Tampak Depan & Interior)</label>
+          <div class="upload-box">
+            <div style="font-size: 2rem; margin-bottom: 4px;">📷</div>
+            <div style="font-size: var(--font-size-sm); font-weight: 600;">Klik atau seret foto mobil ke sini</div>
+            <div style="font-size: var(--font-size-xs); color: var(--color-text-muted);">Maksimal 5 foto (JPG, PNG hingga 5MB)</div>
+          </div>
+        </div>
+
+        <!-- Target Mobil Baru -->
+        <div class="form-section-title">2. Target Mobil Baru yang Diinginkan</div>
+        <div class="form-grid">
+          <div class="form-group" style="grid-column: 1 / -1;">
+            <label class="form-label">Pilih Unit dari Katalog Kami</label>
+            <select class="form-control">
+              <option>Toyota Avanza 1.3 G Manual 2020 (Rp 178 Jt)</option>
+              <option>Honda Brio 1.2 RS CVT 2021 (Rp 168 Jt)</option>
+              <option>Mitsubishi Pajero Sport 2.4 Dakar 2019 (Rp 435 Jt)</option>
+              <option>Hanya ingin jual mobil lama (tanpa beli)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Kontak Pengguna -->
+        <div class="form-section-title">3. Data Kontak & Pengiriman Hasil Taksiran</div>
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Nama Lengkap</label>
+            <input type="text" class="form-control" placeholder="Nama Anda" value="Budi Santoso">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Nomor WhatsApp Aktif</label>
+            <input type="tel" class="form-control error" value="08123">
+            <span class="error-msg">⚠️ Nomor WhatsApp minimal 10 digit dan format valid</span>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-accent">Kirim Permintaan Taksiran Sekarang</button>
+      </form>
+    </div>
+  </div>
+
+</body>
+</html>
