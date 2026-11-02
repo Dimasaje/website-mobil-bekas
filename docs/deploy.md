@@ -98,7 +98,8 @@ SEED_ON_START=true docker compose up -d
 
 Buka `http://localhost`. Perlu diperhatikan:
 
-- Port 80 harus bebas. Kalau dipakai (IIS, Skype, nginx), ubah pemetaan port proxy menjadi `"8080:80"` di `docker-compose.yml` dan set `SITE_URL=http://localhost:8080`.
+- Port 80 dan 443 harus bebas. Kalau dipakai (IIS, Skype, nginx, layanan lain), ubah pemetaan port `proxy` di `docker-compose.yml` menjadi `"8080:80"` dan `"8443:443"`, lalu set `SITE_DOMAIN=http://localhost:8080` dan `SITE_URL=http://localhost:8080`.
+- `docker compose build` memerlukan Docker Desktop (Windows/macOS) yang sudah berjalan; kalau muncul "Docker Desktop is unable to start", restart mesin (instalasi pertama butuh WSL2 siap) atau jalankan Docker Desktop lalu tunggu sampai statusnya *running*.
 - Data yang dibuat saat uji lokal hilang kalau volume dihapus: `docker compose down -v`.
 - `.env` hasil uji lokal jangan dipakai di VPS — buat ulang dari `.env.production.example`.
 
