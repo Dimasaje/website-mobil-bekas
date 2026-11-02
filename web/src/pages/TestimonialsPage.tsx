@@ -130,7 +130,7 @@ export function TestimonialsPage() {
                       loading="lazy"
                     />
                   ) : (
-                    <div className="text-center p-4 text-slate-400">
+                    <div className="text-center p-4 text-slate-600">
                       <span className="text-4xl block mb-1">🤝</span>
                       <span className="text-xs font-medium">
                         Foto Serah Terima Unit
@@ -144,7 +144,7 @@ export function TestimonialsPage() {
                   <div>
                     <div className="flex items-center gap-1 text-amber-500 text-sm mb-2 font-bold">
                       <span>{stars}</span>
-                      <span className="text-xs text-slate-400 ml-1">
+                      <span className="text-xs text-slate-600 ml-1">
                         ({testi.rating}/5)
                       </span>
                     </div>

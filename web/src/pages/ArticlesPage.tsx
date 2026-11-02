@@ -140,7 +140,7 @@ export function ArticlesPage() {
                 {/* Body */}
                 <div className="p-6 flex-1 flex flex-col justify-between">
                   <div>
-                    <div className="text-xs text-slate-400 mb-2 font-medium">
+                    <div className="text-xs text-slate-600 mb-2 font-medium">
                       📅 {dateStr}
                     </div>
                     <h2 className="text-base font-bold text-slate-900 mb-2 line-clamp-2 hover:text-blue-800 transition-colors">

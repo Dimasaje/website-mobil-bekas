@@ -78,6 +78,8 @@ export function Header({
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="md:hidden p-2 rounded-md border border-slate-300 text-slate-700 hover:bg-slate-100"
             aria-label="Toggle Menu"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-menu"
           >
             {mobileMenuOpen ? "✕" : "☰"}
           </button>
@@ -86,7 +88,10 @@ export function Header({
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 bg-white px-4 py-3 space-y-2">
+        <div
+          id="mobile-menu"
+          className="md:hidden border-t border-slate-200 bg-white px-4 py-3 space-y-2"
+        >
           {navLinks.map((item) => (
             <NavLink
               key={item.to}

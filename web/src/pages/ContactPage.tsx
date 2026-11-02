@@ -149,7 +149,7 @@ export function ContactPage() {
             <div className="flex gap-3.5 items-start">
               <span className="text-2xl text-blue-800 flex-shrink-0">📍</span>
               <div>
-                <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
+                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-0.5">
                   Alamat Lengkap
                 </div>
                 <div className="text-sm font-semibold text-slate-900 leading-relaxed">
@@ -162,7 +162,7 @@ export function ContactPage() {
             <div className="flex gap-3.5 items-start">
               <span className="text-2xl text-blue-800 flex-shrink-0">🕒</span>
               <div>
-                <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
+                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-0.5">
                   Jam Operasional
                 </div>
                 <div className="text-sm font-semibold text-slate-900">
@@ -175,7 +175,7 @@ export function ContactPage() {
             <div className="flex gap-3.5 items-start">
               <span className="text-2xl text-blue-800 flex-shrink-0">📞</span>
               <div>
-                <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
+                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-0.5">
                   Telepon Kantor
                 </div>
                 <a
@@ -193,7 +193,7 @@ export function ContactPage() {
                 💬
               </span>
               <div>
-                <div className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-0.5">
+                <div className="text-xs font-bold text-slate-600 uppercase tracking-wider mb-0.5">
                   Konsultasi WhatsApp (Respon Cepat)
                 </div>
                 <a
@@ -365,7 +365,7 @@ export function ContactPage() {
 
               <div className="relative flex py-2 items-center">
                 <div className="flex-grow border-t border-slate-200" />
-                <span className="flex-shrink mx-3 text-xs text-slate-400 uppercase">
+                <span className="flex-shrink mx-3 text-xs text-slate-600 uppercase">
                   atau
                 </span>
                 <div className="flex-grow border-t border-slate-200" />
