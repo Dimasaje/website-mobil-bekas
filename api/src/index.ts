@@ -4,7 +4,9 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
 import { env } from "./env";
+import { requireAdminAuth } from "./middlewares/auth";
 import { errorHandler, notFoundHandler } from "./middlewares/error-handler";
+import { authRouter } from "./routes/auth";
 import { healthRouter } from "./routes/health";
 
 export const app = new Hono();
@@ -15,14 +17,17 @@ app.use(
   "*",
   cors({
     origin: "*",
+    credentials: true,
     allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowHeaders: ["Content-Type", "Authorization"],
+    allowHeaders: ["Content-Type", "Authorization", "Cookie"],
   }),
 );
 
-// Routes
+// Public API Router
 const api = new Hono();
 api.route("/health", healthRouter);
+api.route("/auth", authRouter);
+
 api.get("/db-check", async (c) => {
   try {
     const result = await db.execute(sql`SELECT 1 as connected`);
@@ -43,6 +48,22 @@ api.get("/db-check", async (c) => {
   }
 });
 
+// Admin Protected API Router: /api/admin/*
+const adminApi = new Hono();
+adminApi.use("*", requireAdminAuth);
+adminApi.route("/auth", authRouter);
+adminApi.get("/dashboard", (c) => {
+  const admin = c.get("admin");
+  return c.json({
+    success: true,
+    data: {
+      message: "Selamat datang di dashboard admin",
+      user: admin,
+    },
+  });
+});
+
+api.route("/admin", adminApi);
 app.route("/api", api);
 
 // Error and 404 Handlers
