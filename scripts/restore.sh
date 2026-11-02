@@ -81,9 +81,11 @@ fi
 
 if [ -n "$UPLOADS" ]; then
   # Container sekali pakai: entrypoint diganti sh supaya migrasi tidak ikut jalan,
-  # tetapi volume uploads tetap ter-mount.
+  # tetapi volume uploads tetap ter-mount. /app/uploads adalah mount point,
+  # jadi isinya dihapus (mount point-nya tidak boleh dihapus — "Device or
+  # resource busy") sebelum tar diekstrak di /app.
   echo "Restore foto dari $UPLOADS..."
-  docker compose run --rm -T --no-deps --entrypoint sh app -c 'rm -rf /app/uploads'
+  docker compose run --rm -T --no-deps --entrypoint sh app -c 'find /app/uploads -mindepth 1 -delete'
   docker compose run --rm -T --no-deps --entrypoint sh app -c 'tar xzf - -C /app' <"$UPLOADS"
 fi
 
