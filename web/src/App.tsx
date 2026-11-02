@@ -12,6 +12,8 @@ import { PageNotFound } from "./pages/PageNotFound";
 import { TestimonialsPage } from "./pages/TestimonialsPage";
 import { TradeInPage } from "./pages/TradeInPage";
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage";
+import { AdminCarFormPage } from "./pages/admin/AdminCarFormPage";
+import { AdminCarsPage } from "./pages/admin/AdminCarsPage";
 import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
 import { AdminSectionPlaceholder } from "./pages/admin/AdminSectionPlaceholder";
 
@@ -36,15 +38,9 @@ export function App() {
         <Route path="/admin/login" element={<AdminLoginPage />} />
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboardPage />} />
-          <Route
-            path="mobil"
-            element={
-              <AdminSectionPlaceholder
-                title="Kelola Stok Mobil"
-                description="Daftar unit, tambah unit baru, dan update status stok."
-              />
-            }
-          />
+          <Route path="mobil" element={<AdminCarsPage />} />
+          <Route path="mobil/baru" element={<AdminCarFormPage />} />
+          <Route path="mobil/:id" element={<AdminCarFormPage />} />{" "}
           <Route
             path="leads"
             element={

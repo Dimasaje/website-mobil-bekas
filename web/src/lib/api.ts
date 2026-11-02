@@ -91,7 +91,14 @@ export const api = {
       method: "PATCH",
       body: body ? JSON.stringify(body) : undefined,
     }),
+  put: <T>(endpoint: string, body?: unknown) =>
+    request<T>(endpoint, {
+      method: "PUT",
+      body: body ? JSON.stringify(body) : undefined,
+    }),
   delete: <T>(endpoint: string) => request<T>(endpoint, { method: "DELETE" }),
+  upload: <T>(endpoint: string, formData: FormData) =>
+    request<T>(endpoint, { method: "POST", body: formData }),
 };
 
 // Types for domain entities
@@ -135,6 +142,61 @@ export interface CarFilters {
   fuelTypes: string[];
   priceRange: { min: number; max: number };
   yearRange: { min: number; max: number };
+}
+
+export type CarStatus =
+  "draft" | "tersedia" | "booking" | "terjual" | "diarsipkan";
+
+export interface AdminCarPhoto {
+  id: string;
+  carId: string;
+  url: string;
+  order: number;
+  isPrimary: boolean;
+}
+
+export interface AdminCar {
+  id: string;
+  brandId: string;
+  brand?: { id: string; name: string; slug: string } | null;
+  title: string;
+  slug: string;
+  model: string;
+  year: number;
+  price: number | string;
+  transmission: "manual" | "matic";
+  mileage: number;
+  fuelType: "bensin" | "diesel" | "hybrid" | "listrik";
+  engineCapacity?: number | null;
+  color?: string | null;
+  licensePlate?: string | null;
+  stnkValidUntil?: string | null;
+  description?: string | null;
+  features?: string[] | null;
+  status: CarStatus;
+  isFeatured: boolean;
+  viewsCount?: number;
+  photos?: AdminCarPhoto[];
+}
+
+export interface AdminCarInput {
+  brandId: string;
+  title: string;
+  slug?: string;
+  model: string;
+  year: number;
+  price: number;
+  transmission: "manual" | "matic";
+  mileage: number;
+  fuelType: "bensin" | "diesel" | "hybrid" | "listrik";
+  engineCapacity?: number | null;
+  color?: string | null;
+  licensePlate?: string | null;
+  stnkValidUntil?: string | null;
+  description?: string | null;
+  features?: string[];
+  status?: CarStatus;
+  isFeatured?: boolean;
 }
 
 export interface Promo {
@@ -262,4 +324,71 @@ export const apiClient = {
   logoutAdmin: () => api.post<ApiResponse<null>>("/api/auth/logout"),
 
   getAdminMe: () => api.get<ApiResponse<{ user: AdminUser }>>("/api/auth/me"),
+
+  // Admin cars
+  listAdminCars: (params?: {
+    page?: number;
+    limit?: number;
+    search?: string;
+    status?: string;
+    brandId?: string;
+  }) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params ?? {}).forEach(([key, val]) => {
+      if (val !== undefined && val !== "")
+        searchParams.append(key, String(val));
+    });
+    const query = searchParams.toString();
+    return api.get<ApiResponse<AdminCar[]>>(
+      `/api/admin/cars${query ? `?${query}` : ""}`,
+    );
+  },
+
+  getAdminCar: (id: string) =>
+    api.get<ApiResponse<AdminCar>>(`/api/admin/cars/${id}`),
+
+  createAdminCar: (data: AdminCarInput) =>
+    api.post<ApiResponse<AdminCar>>("/api/admin/cars", data),
+
+  updateAdminCar: (id: string, data: Partial<AdminCarInput>) =>
+    api.patch<ApiResponse<AdminCar>>(`/api/admin/cars/${id}`, data),
+
+  updateAdminCarStatus: (id: string, status: CarStatus) =>
+    api.patch<ApiResponse<AdminCar>>(`/api/admin/cars/${id}/status`, {
+      status,
+    }),
+
+  updateAdminCarFeatured: (id: string, isFeatured: boolean) =>
+    api.patch<ApiResponse<AdminCar>>(`/api/admin/cars/${id}/featured`, {
+      isFeatured,
+    }),
+
+  archiveAdminCar: (id: string) =>
+    api.delete<ApiResponse<AdminCar>>(`/api/admin/cars/${id}`),
+
+  uploadCarPhotos: (carId: string, files: File[]) => {
+    const formData = new FormData();
+    for (const file of files) formData.append("file", file);
+    return api.upload<ApiResponse<AdminCarPhoto[]>>(
+      `/api/admin/cars/${carId}/photos`,
+      formData,
+    );
+  },
+
+  reorderCarPhotos: (
+    carId: string,
+    photos: Array<{ id: string; order: number }>,
+  ) =>
+    api.put<ApiResponse<AdminCarPhoto[]>>(
+      `/api/admin/cars/${carId}/photos/reorder`,
+      { photos },
+    ),
+
+  setPrimaryCarPhoto: (carId: string, photoId: string) =>
+    api.patch<ApiResponse<AdminCarPhoto>>(
+      `/api/admin/cars/${carId}/photos/${photoId}/primary`,
+    ),
+
+  deleteCarPhoto: (carId: string, photoId: string) =>
+    api.delete<ApiResponse<null>>(`/api/admin/cars/${carId}/photos/${photoId}`),
 };
