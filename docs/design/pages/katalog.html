@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Katalog Mobil Bekas Berkualitas — Bintang Mobil</title>
+  <link rel="stylesheet" href="../tokens.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family-sans);
+      background-color: var(--color-bg-canvas);
+      color: var(--color-text-primary);
+      line-height: var(--line-height-normal);
+      padding-bottom: 90px;
+    }
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; height: auto; display: block; }
+
+    .container {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 0 var(--space-4);
+    }
+
+    /* Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      background: var(--color-bg-surface);
+      border-bottom: 1px solid var(--color-border-subtle);
+      z-index: var(--z-sticky);
+      box-shadow: var(--shadow-sm);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+    }
+    .nav-links {
+      display: flex;
+      gap: var(--space-5);
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      padding: 8px 0;
+      border-bottom: 2px solid transparent;
+    }
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      min-height: var(--touch-target-min);
+      padding: 0 var(--space-4);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semibold);
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-align: center;
+      transition: background-color var(--transition-fast);
+    }
+    .btn-primary { background: var(--color-primary); color: #FFF; }
+    .btn-primary:hover { background: var(--color-primary-hover); }
+    .btn-wa { background: var(--color-wa); color: #FFF; }
+    .btn-wa:hover { background: var(--color-wa-hover); }
+    .btn-outline { background: transparent; border-color: var(--color-border-default); color: var(--color-text-primary); }
+    .btn-outline:hover { background: var(--color-bg-subtle); }
+    .btn-sm { min-height: 38px; font-size: var(--font-size-sm); padding: 0 var(--space-3); }
+
+    /* Breadcrumbs */
+    .breadcrumb {
+      padding: var(--space-4) 0;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      display: flex;
+      gap: var(--space-2);
+      align-items: center;
+    }
+
+    /* Catalog Layout */
+    .catalog-header {
+      margin-bottom: var(--space-6);
+    }
+    .catalog-header h1 {
+      font-size: var(--font-size-3xl);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-1);
+    }
+    .catalog-header p {
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-sm);
+    }
+
+    .catalog-toolbar {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg);
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-3);
+      margin-bottom: var(--space-6);
+    }
+    .search-input-box {
+      display: flex;
+      align-items: center;
+      background: var(--color-bg-subtle);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md);
+      padding: 0 var(--space-3);
+      min-height: 40px;
+      flex: 1;
+      max-width: 380px;
+    }
+    .search-input-box input {
+      border: none;
+      background: transparent;
+      font-size: var(--font-size-sm);
+      color: var(--color-text-primary);
+      width: 100%;
+      outline: none;
+    }
+    .toolbar-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .sort-select {
+      height: 40px;
+      padding: 0 var(--space-3);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md);
+      background: var(--color-bg-surface);
+      font-size: var(--font-size-sm);
+      color: var(--color-text-primary);
+    }
+
+    .catalog-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: var(--space-6);
+      align-items: start;
+    }
+
+    /* Filter Sidebar */
+    .filter-card {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      box-shadow: var(--shadow-sm);
+    }
+    .filter-title {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-bold);
+      margin-bottom: var(--space-4);
+      padding-bottom: var(--space-2);
+      border-bottom: 1px solid var(--color-border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .filter-group {
+      margin-bottom: var(--space-4);
+    }
+    .filter-group label {
+      display: block;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-1);
+      text-transform: uppercase;
+    }
+    .filter-control {
+      width: 100%;
+      min-height: 40px;
+      padding: 0 var(--space-3);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      background: var(--color-bg-surface);
+      color: var(--color-text-primary);
+    }
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      margin-bottom: var(--space-2);
+      cursor: pointer;
+    }
+    .checkbox-item input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--color-primary);
+    }
+
+    /* Car Cards */
+    .car-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: var(--space-5);
+    }
+    .car-card {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .car-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+    .car-media {
+      position: relative;
+      height: 180px;
+      background: var(--color-bg-subtle);
+    }
+    .car-badge {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 2;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 8px;
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+    }
+    .badge-available { background: var(--color-status-available-bg); color: var(--color-status-available-text); border: 1px solid var(--color-status-available-border); }
+    .badge-booking { background: var(--color-status-booking-bg); color: var(--color-status-booking-text); border: 1px solid var(--color-status-booking-border); }
+    .badge-sold { background: var(--color-status-sold-bg); color: var(--color-status-sold-text); border: 1px solid var(--color-status-sold-border); }
+
+    .car-body {
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      gap: var(--space-2);
+    }
+    .car-title {
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-bold);
+      line-height: var(--line-height-snug);
+    }
+    .car-specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+    .spec-pill {
+      background: var(--color-bg-subtle);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+    }
+    .car-pricing {
+      margin-top: var(--space-2);
+      padding-top: var(--space-2);
+      border-top: 1px solid var(--color-border-subtle);
+    }
+    .car-price {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+    }
+    .car-dp {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+    }
+    .car-dp strong { color: var(--color-accent); }
+    .car-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2);
+      margin-top: var(--space-3);
+    }
+
+    /* Pagination */
+    .pagination-bar {
+      margin-top: var(--space-8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: var(--space-2);
+    }
+    .page-link {
+      min-width: 44px;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
+    }
+    .page-link.active {
+      background: var(--color-primary);
+      color: #FFF;
+      border-color: var(--color-primary);
+    }
+
+    /* Floating CTA */
+    .floating-cta {
+      position: fixed;
+      bottom: var(--space-4);
+      right: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      z-index: var(--z-floating-cta);
+    }
+    .fab {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0 var(--space-4);
+      min-height: 48px;
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-bold);
+      box-shadow: var(--shadow-floating);
+    }
+    .fab-wa { background: var(--color-wa); color: #FFF; }
+    .fab-phone { background: var(--color-primary); color: #FFF; box-shadow: var(--shadow-md); }
+
+    /* Footer */
+    .footer {
+      background: #0F172A;
+      color: #94A3B8;
+      padding: var(--space-8) 0 var(--space-6);
+      margin-top: var(--space-12);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--space-6);
+    }
+    .footer-bottom { border-top: 1px solid #334155; margin-top: var(--space-6); padding-top: var(--space-4); text-align: center; font-size: var(--font-size-xs); }
+
+    .mobile-filter-btn {
+      display: none;
+    }
+
+    @media (max-width: 860px) {
+      .catalog-layout {
+        grid-template-columns: 1fr;
+      }
+      .filter-card {
+        display: none; /* Disembunyikan ke drawer di mobile */
+      }
+      .mobile-filter-btn {
+        display: inline-flex;
+      }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="beranda.html" class="brand-logo">
+        🚗 <span>Bintang Mobil</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="beranda.html">Beranda</a></li>
+        <li><a href="katalog.html" class="active">Katalog Mobil</a></li>
+        <li><a href="simulasi-kredit.html">Simulasi Kredit</a></li>
+        <li><a href="tukar-tambah.html">Tukar Tambah</a></li>
+        <li><a href="testimoni.html">Testimoni</a></li>
+        <li><a href="kontak.html">Kontak</a></li>
+      </ul>
+      <a href="https://wa.me/6281298765432" target="_blank" class="btn btn-wa btn-sm">💬 Chat WA</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Breadcrumb -->
+    <nav class="breadcrumb">
+      <a href="beranda.html">Beranda</a>
+      <span>›</span>
+      <span style="color: var(--color-text-primary); font-weight: 600;">Katalog Mobil Bekas</span>
+    </nav>
+
+    <!-- Header & Summary -->
+    <div class="catalog-header">
+      <h1>Katalog Mobil Bekas Pilihan</h1>
+      <p>Menampilkan <strong>35 unit</strong> mobil bekas siap pakai bergaransi resmi.</p>
+    </div>
+
+    <!-- Toolbar: Search & Sort -->
+    <div class="catalog-toolbar">
+      <div class="search-input-box">
+        <span style="margin-right: 8px;">🔍</span>
+        <input type="text" placeholder="Cari nama mobil, tipe, atau transmisi...">
+      </div>
+
+      <div class="toolbar-actions">
+        <button class="btn btn-outline btn-sm mobile-filter-btn">⚙️ Filter (3)</button>
+        <select class="sort-select">
+          <option>Urutan: Terbaru Masuk</option>
+          <option>Harga: Termurah</option>
+          <option>Harga: Termahal</option>
+          <option>Tahun: Terbaru</option>
+          <option>Kilometer: Terendah</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Layout Grid: Sidebar Filter + Car Cards -->
+    <div class="catalog-layout">
+      
+      <!-- Filter Sidebar (Desktop) -->
+      <aside class="filter-card">
+        <div class="filter-title">
+          <span>Filter Stok</span>
+          <button style="background: none; border: none; font-size: var(--font-size-xs); color: var(--color-accent); cursor: pointer;">Reset Semua</button>
+        </div>
+
+        <div class="filter-group">
+          <label>Merek Mobil</label>
+          <select class="filter-control">
+            <option>Semua Merek (35)</option>
+            <option>Toyota (14)</option>
+            <option>Honda (10)</option>
+            <option>Daihatsu (5)</option>
+            <option>Mitsubishi (4)</option>
+            <option>Suzuki (2)</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Rentang Harga</label>
+          <select class="filter-control">
+            <option>Semua Harga</option>
+            <option>&lt; Rp 150 Juta</option>
+            <option>Rp 150 - 250 Juta</option>
+            <option>Rp 250 - 350 Juta</option>
+            <option>&gt; Rp 350 Juta</option>
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label>Tahun Pembuatan</label>
+          <div style="display: flex; gap: var(--space-2);">
+            <input type="number" class="filter-control" placeholder="Min (2015)" value="2016">
+            <input type="number" class="filter-control" placeholder="Maks" value="2024">
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <label>Transmisi</label>
+          <label class="checkbox-item">
+            <input type="checkbox" checked>
+            <span>Otomatis / Matic (24)</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" checked>
+            <span>Manual (11)</span>
+          </label>
+        </div>
+
+        <div class="filter-group">
+          <label>Bahan Bakar</label>
+          <label class="checkbox-item">
+            <input type="checkbox" checked>
+            <span>Bensin (30)</span>
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox">
+            <span>Diesel (5)</span>
+          </label>
+        </div>
+
+        <div class="filter-group">
+          <label>Status Stok</label>
+          <label class="checkbox-item">
+            <input type="checkbox" checked>
+            <span>Hanya Unit Tersedia</span>
+          </label>
+        </div>
+
+        <button class="btn btn-primary" style="width: 100%; margin-top: var(--space-2);">Terapkan Filter</button>
+      </aside>
+
+      <!-- Grid Mobil -->
+      <main>
+        <div class="car-grid">
+          
+          <!-- Unit 1 -->
+          <article class="car-card">
+            <div class="car-media">
+              <span class="car-badge badge badge-available">Tersedia</span>
+              <svg width="100%" height="100%" viewBox="0 0 400 240" fill="#E2E8F0">
+                <rect width="100%" height="100%" fill="#E2E8F0"/>
+                <path d="M70 160L110 95H280L330 160H70Z" fill="#94A3B8"/>
+                <circle cx="120" cy="170" r="28" fill="#334155"/>
+                <circle cx="280" cy="170" r="28" fill="#334155"/>
+                <text x="50%" y="130" text-anchor="middle" fill="#0F172A" font-size="16" font-family="sans-serif">Toyota Avanza 1.3 G</text>
+              </svg>
+            </div>
+            <div class="car-body">
+              <h2 class="car-title">Toyota Avanza 1.3 G Manual 2020</h2>
+              <div class="car-specs">
+                <span class="spec-pill">2020</span>
+                <span class="spec-pill">Manual</span>
+                <span class="spec-pill">42.000 km</span>
+                <span class="spec-pill">Hitam</span>
+              </div>
+              <div class="car-pricing">
+                <div class="car-price">Rp 178.000.000</div>
+                <div class="car-dp">DP Rp 25 Jt • Cicilan <strong>Rp 3,4 Jt/bln</strong></div>
+              </div>
+              <div class="car-actions">
+                <a href="detail-mobil.html" class="btn btn-outline btn-sm">Detail</a>
+                <a href="https://wa.me/6281298765432?text=Halo,%20tanya%20unit%20Avanza%202020" target="_blank" class="btn btn-wa btn-sm">💬 Chat WA</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Unit 2 -->
+          <article class="car-card">
+            <div class="car-media">
+              <span class="car-badge badge badge-available">Tersedia</span>
+              <svg width="100%" height="100%" viewBox="0 0 400 240" fill="#E2E8F0">
+                <rect width="100%" height="100%" fill="#CBD5E1"/>
+                <path d="M80 155L120 90H270L320 155H80Z" fill="#64748B"/>
+                <circle cx="130" cy="165" r="26" fill="#1E293B"/>
+                <circle cx="270" cy="165" r="26" fill="#1E293B"/>
+                <text x="50%" y="130" text-anchor="middle" fill="#0F172A" font-size="16" font-family="sans-serif">Honda Brio RS CVT</text>
+              </svg>
+            </div>
+            <div class="car-body">
+              <h2 class="car-title">Honda Brio 1.2 RS CVT 2021</h2>
+              <div class="car-specs">
+                <span class="spec-pill">2021</span>
+                <span class="spec-pill">Matic</span>
+                <span class="spec-pill">26.000 km</span>
+                <span class="spec-pill">Kuning</span>
+              </div>
+              <div class="car-pricing">
+                <div class="car-price">Rp 168.000.000</div>
+                <div class="car-dp">DP Rp 20 Jt • Cicilan <strong>Rp 3,1 Jt/bln</strong></div>
+              </div>
+              <div class="car-actions">
+                <a href="detail-mobil.html" class="btn btn-outline btn-sm">Detail</a>
+                <a href="https://wa.me/6281298765432?text=Halo,%20tanya%20unit%20Honda%20Brio%202021" target="_blank" class="btn btn-wa btn-sm">💬 Chat WA</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Unit 3 -->
+          <article class="car-card">
+            <div class="car-media">
+              <span class="car-badge badge badge-booking">Booking</span>
+              <svg width="100%" height="100%" viewBox="0 0 400 240" fill="#E2E8F0">
+                <rect width="100%" height="100%" fill="#E2E8F0"/>
+                <path d="M60 160L100 85H290L340 160H60Z" fill="#475569"/>
+                <circle cx="120" cy="170" r="30" fill="#0F172A"/>
+                <circle cx="290" cy="170" r="30" fill="#0F172A"/>
+                <text x="50%" y="130" text-anchor="middle" fill="#0F172A" font-size="16" font-family="sans-serif">Mitsubishi Pajero Dakar</text>
+              </svg>
+            </div>
+            <div class="car-body">
+              <h2 class="car-title">Mitsubishi Pajero 2.4 Dakar 2019</h2>
+              <div class="car-specs">
+                <span class="spec-pill">2019</span>
+                <span class="spec-pill">Matic</span>
+                <span class="spec-pill">58.000 km</span>
+                <span class="spec-pill">Putih</span>
+              </div>
+              <div class="car-pricing">
+                <div class="car-price">Rp 435.000.000</div>
+                <div class="car-dp">DP Rp 65 Jt • Cicilan <strong>Rp 8,5 Jt/bln</strong></div>
+              </div>
+              <div class="car-actions">
+                <a href="detail-mobil.html" class="btn btn-outline btn-sm">Detail</a>
+                <a href="https://wa.me/6281298765432?text=Halo,%20tanya%20status%20booking%20Pajero" target="_blank" class="btn btn-wa btn-sm">💬 Antrian</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Unit 4 -->
+          <article class="car-card">
+            <div class="car-media">
+              <span class="car-badge badge badge-available">Tersedia</span>
+              <svg width="100%" height="100%" viewBox="0 0 400 240" fill="#E2E8F0">
+                <rect width="100%" height="100%" fill="#E2E8F0"/>
+                <path d="M75 160L115 95H275L325 160H75Z" fill="#3B82F6"/>
+                <circle cx="125" cy="170" r="28" fill="#1E293B"/>
+                <circle cx="275" cy="170" r="28" fill="#1E293B"/>
+                <text x="50%" y="130" text-anchor="middle" fill="#FFF" font-size="16" font-family="sans-serif">Toyota Innova Reborn</text>
+              </svg>
+            </div>
+            <div class="car-body">
+              <h2 class="car-title">Toyota Kijang Innova 2.0 V 2018</h2>
+              <div class="car-specs">
+                <span class="spec-pill">2018</span>
+                <span class="spec-pill">Matic</span>
+                <span class="spec-pill">62.000 km</span>
+                <span class="spec-pill">Silver</span>
+              </div>
+              <div class="car-pricing">
+                <div class="car-price">Rp 265.000.000</div>
+                <div class="car-dp">DP Rp 35 Jt • Cicilan <strong>Rp 5,1 Jt/bln</strong></div>
+              </div>
+              <div class="car-actions">
+                <a href="detail-mobil.html" class="btn btn-outline btn-sm">Detail</a>
+                <a href="https://wa.me/6281298765432?text=Halo,%20tanya%20unit%20Innova%202018" target="_blank" class="btn btn-wa btn-sm">💬 Chat WA</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Unit 5 -->
+          <article class="car-card">
+            <div class="car-media">
+              <span class="car-badge badge badge-available">Tersedia</span>
+              <svg width="100%" height="100%" viewBox="0 0 400 240" fill="#E2E8F0">
+                <rect width="100%" height="100%" fill="#CBD5E1"/>
+                <path d="M70 160L110 100H280L330 160H70Z" fill="#64748B"/>
+                <circle cx="120" cy="170" r="28" fill="#0F172A"/>
+                <circle cx="280" cy="170" r="28" fill="#0F172A"/>
+                <text x="50%" y="130" text-anchor="middle" fill="#0F172A" font-size="16" font-family="sans-serif">Daihatsu Sigra 1.2 R</text>
+              </svg>
+            </div>
+            <div class="car-body">
+              <h2 class="car-title">Daihatsu Sigra 1.2 R Deluxe 2022</h2>
+              <div class="car-specs">
+                <span class="spec-pill">2022</span>
+                <span class="spec-pill">Manual</span>
+                <span class="spec-pill">19.000 km</span>
+                <span class="spec-pill">Abu-abu</span>
+              </div>
+              <div class="car-pricing">
+                <div class="car-price">Rp 128.000.000</div>
+                <div class="car-dp">DP Rp 15 Jt • Cicilan <strong>Rp 2,4 Jt/bln</strong></div>
+              </div>
+              <div class="car-actions">
+                <a href="detail-mobil.html" class="btn btn-outline btn-sm">Detail</a>
+                <a href="https://wa.me/6281298765432?text=Halo,%20tanya%20Sigra%202022" target="_blank" class="btn btn-wa btn-sm">💬 Chat WA</a>
+              </div>
+            </div>
+          </article>
+
+          <!-- Unit 6 -->
+          <article class="car-card">
+            <div class="car-media">
+              <span class="car-badge badge badge-sold">Terjual</span>
+              <svg width="100%" height="100%" viewBox="0 0 400 240" fill="#E2E8F0">
+                <rect width="100%" height="100%" fill="#E2E8F0"/>
+                <path d="M80 155L120 95H270L320 155H80Z" fill="#94A3B8"/>
+                <circle cx="130" cy="165" r="26" fill="#334155"/>
+                <circle cx="270" cy="165" r="26" fill="#334155"/>
+                <text x="50%" y="130" text-anchor="middle" fill="#0F172A" font-size="16" font-family="sans-serif">Honda HR-V 1.5 E</text>
+              </svg>
+            </div>
+            <div class="car-body">
+              <h2 class="car-title">Honda HR-V 1.5 E CVT 2020</h2>
+              <div class="car-specs">
+                <span class="spec-pill">2020</span>
+                <span class="spec-pill">Matic</span>
+                <span class="spec-pill">34.000 km</span>
+                <span class="spec-pill">Merah</span>
+              </div>
+              <div class="car-pricing">
+                <div class="car-price" style="color: var(--color-text-muted);">Rp 245.000.000</div>
+                <div class="car-dp">Status: Terjual ke konsumen Bekasi</div>
+              </div>
+              <div class="car-actions">
+                <a href="detail-mobil.html" class="btn btn-outline btn-sm">Lihat Spek</a>
+                <button class="btn btn-outline btn-sm" disabled style="opacity: 0.5;">Unit Terjual</button>
+              </div>
+            </div>
+          </article>
+
+        </div>
+
+        <!-- Pagination -->
+        <nav class="pagination-bar">
+          <a href="#" class="page-link" style="opacity: 0.5;">‹</a>
+          <a href="#" class="page-link active">1</a>
+          <a href="#" class="page-link">2</a>
+          <a href="#" class="page-link">3</a>
+          <a href="#" class="page-link">›</a>
+        </nav>
+      </main>
+
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <h4 style="color: #FFF; margin-bottom: 8px;">Bintang Mobil Bekas</h4>
+          <p style="font-size: var(--font-size-sm);">Spesialis mobil bekas kualitas tinggi dengan proses pembelian transparan dan garansi resmi.</p>
+        </div>
+        <div>
+          <h4 style="color: #FFF; margin-bottom: 8px;">Showroom</h4>
+          <p style="font-size: var(--font-size-sm);">Jl. Otista Raya No. 45, Jakarta Timur<br>Buka 09.00 - 18.00 WIB</p>
+        </div>
+      </div>
+      <div class="footer-bottom">© 2026 Bintang Mobil Bekas. All Rights Reserved.</div>
+    </div>
+  </footer>
+
+  <!-- Floating WA & Phone -->
+  <aside class="floating-cta">
+    <a href="tel:02185901234" class="fab fab-phone">📞 Telepon</a>
+    <a href="https://wa.me/6281298765432" target="_blank" class="fab fab-wa">💬 WhatsApp</a>
+  </aside>
+
+</body>
+</html>
