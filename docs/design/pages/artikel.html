@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Artikel & Tips Seputar Mobil Bekas — Bintang Mobil</title>
+  <link rel="stylesheet" href="../tokens.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family-sans);
+      background-color: var(--color-bg-canvas);
+      color: var(--color-text-primary);
+      line-height: var(--line-height-normal);
+      padding-bottom: 90px;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1040px; margin: 0 auto; padding: 0 var(--space-4); }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      background: var(--color-bg-surface);
+      border-bottom: 1px solid var(--color-border-subtle);
+      z-index: var(--z-sticky);
+      box-shadow: var(--shadow-sm);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .brand-logo { font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-primary); }
+    .nav-links { display: flex; gap: var(--space-5); list-style: none; }
+    .nav-links a { font-size: var(--font-size-sm); color: var(--color-text-secondary); padding: 8px 0; }
+    .nav-links a.active { color: var(--color-primary); font-weight: 600; }
+
+    .breadcrumb { padding: var(--space-4) 0; font-size: var(--font-size-xs); color: var(--color-text-muted); display: flex; gap: var(--space-2); }
+    
+    .page-header { max-width: 680px; margin: var(--space-4) 0 var(--space-8); }
+    .page-header h1 { font-size: var(--font-size-3xl); color: var(--color-text-primary); margin-bottom: var(--space-2); }
+    .page-header p { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+
+    .articles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: var(--space-6);
+    }
+    .article-card {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      transition: transform var(--transition-fast);
+    }
+    .article-card:hover { transform: translateY(-3px); }
+    .article-img {
+      height: 180px;
+      background: var(--color-bg-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+    }
+    .article-body {
+      padding: var(--space-5);
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+    .article-meta {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+      margin-bottom: var(--space-2);
+      display: flex;
+      gap: var(--space-3);
+    }
+    .article-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-2);
+      line-height: var(--line-height-snug);
+    }
+    .article-excerpt {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      line-height: var(--line-height-relaxed);
+      margin-bottom: var(--space-4);
+      flex-grow: 1;
+    }
+    .article-link {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-primary);
+    }
+
+    .btn-wa {
+      background: var(--color-wa);
+      color: #FFF;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 var(--space-4);
+      min-height: 40px;
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+    }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="beranda.html" class="brand-logo">🚗 <span>Bintang Mobil</span></a>
+      <ul class="nav-links">
+        <li><a href="beranda.html">Beranda</a></li>
+        <li><a href="katalog.html">Katalog Mobil</a></li>
+        <li><a href="simulasi-kredit.html">Simulasi Kredit</a></li>
+        <li><a href="tukar-tambah.html">Tukar Tambah</a></li>
+        <li><a href="artikel.html" class="active">Artikel & Tips</a></li>
+        <li><a href="kontak.html">Kontak</a></li>
+      </ul>
+      <a href="https://wa.me/6281298765432" target="_blank" class="btn-wa">💬 Chat WA</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav class="breadcrumb">
+      <a href="beranda.html">Beranda</a>
+      <span>›</span>
+      <span style="color: var(--color-text-primary); font-weight: 600;">Artikel & Tips Otomotif</span>
+    </nav>
+
+    <div class="page-header">
+      <h1>Panduan Cerdas Memilih Mobil Bekas</h1>
+      <p>Kumpulan tips inspeksi teknis, perbandingan biaya kepemilikan, dan panduan administrasi legalitas kendaraan bekas.</p>
+    </div>
+
+    <div class="articles-grid">
+      <!-- Artikel 1 -->
+      <article class="article-card">
+        <div class="article-img">🔍</div>
+        <div class="article-body">
+          <div class="article-meta">
+            <span>📅 28 Okt 2026</span>
+            <span>• Panduan Inspeksi</span>
+          </div>
+          <h2 class="article-title">5 Tanda Mobil Bekas Pernah Terendam Banjir yang Sulit Disembunyikan</h2>
+          <p class="article-excerpt">Jangan hanya melihat kilau cat luar. Pelajari cara memeriksa aroma kabin, karat pada baut rel jok, dan endapan lumpur di soket kelistrikan.</p>
+          <a href="#" class="article-link">Baca Selengkapnya →</a>
+        </div>
+      </article>
+
+      <!-- Artikel 2 -->
+      <article class="article-card">
+        <div class="article-img">📄</div>
+        <div class="article-body">
+          <div class="article-meta">
+            <span>📅 20 Okt 2026</span>
+            <span>• Legalitas & Dokumen</span>
+          </div>
+          <h2 class="article-title">Panduan Lengkap Cara Cek Keaslian BPKB dan Faktur Pembelian</h2>
+          <p class="article-excerpt">Langkah mudah memverifikasi keabsahan dokumen kepemilikan mobil di Samsat sebelum Anda membayar lunas kendaraan bekas incaran Anda.</p>
+          <a href="#" class="article-link">Baca Selengkapnya →</a>
+        </div>
+      </article>
+
+      <!-- Artikel 3 -->
+      <article class="article-card">
+        <div class="article-img">💰</div>
+        <div class="article-body">
+          <div class="article-meta">
+            <span>📅 15 Okt 2026</span>
+            <span>• Simulasi & Finansial</span>
+          </div>
+          <h2 class="article-title">Beli Tunai vs Kredit: Mana yang Lebih Menguntungkan untuk Mobil Bekas?</h2>
+          <p class="article-excerpt">Ulasan hitungan total pengeluaran bunga cicilan versus mempertahankan dana darurat tunai saat membeli kendaraan operasional harian.</p>
+          <a href="#" class="article-link">Baca Selengkapnya →</a>
+        </div>
+      </article>
+    </div>
+  </div>
+
+</body>
+</html>

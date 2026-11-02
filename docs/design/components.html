@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panduan Komponen UI — Website Jual Mobil Bekas</title>
+  <link rel="stylesheet" href="tokens.css">
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family-sans);
+      background-color: var(--color-bg-canvas);
+      color: var(--color-text-primary);
+      line-height: var(--line-height-normal);
+      padding: var(--space-4);
+      padding-bottom: 120px; /* Ruang untuk floating WA */
+    }
+
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    /* Header Demo */
+    .guide-header {
+      background-color: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      margin-bottom: var(--space-8);
+      box-shadow: var(--shadow-sm);
+    }
+    .guide-header h1 {
+      font-size: var(--font-size-3xl);
+      color: var(--color-primary);
+      margin-bottom: var(--space-2);
+    }
+    .guide-header p {
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-base);
+    }
+    .badge-guide {
+      display: inline-block;
+      margin-top: var(--space-2);
+      padding: 4px 10px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      background: var(--color-primary-50);
+      color: var(--color-primary);
+      border-radius: var(--radius-full);
+    }
+
+    /* Section Wrapper */
+    .section-block {
+      background-color: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg);
+      padding: var(--space-6);
+      margin-bottom: var(--space-8);
+      box-shadow: var(--shadow-sm);
+    }
+    .section-block h2 {
+      font-size: var(--font-size-2xl);
+      margin-bottom: var(--space-2);
+      border-bottom: 2px solid var(--color-bg-subtle);
+      padding-bottom: var(--space-2);
+      color: var(--color-text-primary);
+    }
+    .section-block p.desc {
+      color: var(--color-text-secondary);
+      font-size: var(--font-size-sm);
+      margin-bottom: var(--space-6);
+    }
+
+    .state-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-4);
+      align-items: center;
+      margin-bottom: var(--space-6);
+    }
+    .state-item {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      min-width: 140px;
+    }
+    .state-label {
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ==========================================================================
+       KOMPONEN 1: Tombol (Buttons)
+       ========================================================================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      padding: 0 var(--space-4);
+      min-height: var(--touch-target-min);
+      font-family: inherit;
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-semibold);
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+      white-space: nowrap;
+    }
+    .btn:focus-visible, .btn.state-focus {
+      outline: 2px solid var(--color-primary);
+      outline-offset: 2px;
+      box-shadow: 0 0 0 4px var(--color-primary-100);
+    }
+
+    /* Primary Button */
+    .btn-primary {
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+    }
+    .btn-primary:hover, .btn-primary.state-hover {
+      background-color: var(--color-primary-hover);
+    }
+
+    /* Accent CTA Button */
+    .btn-accent {
+      background-color: var(--color-accent);
+      color: var(--color-accent-text);
+    }
+    .btn-accent:hover, .btn-accent.state-hover {
+      background-color: var(--color-accent-hover);
+    }
+
+    /* WhatsApp Button */
+    .btn-wa {
+      background-color: var(--color-wa);
+      color: var(--color-wa-text);
+    }
+    .btn-wa:hover, .btn-wa.state-hover {
+      background-color: var(--color-wa-hover);
+    }
+
+    /* Outline Button */
+    .btn-outline {
+      background-color: transparent;
+      border-color: var(--color-border-default);
+      color: var(--color-text-primary);
+    }
+    .btn-outline:hover, .btn-outline.state-hover {
+      background-color: var(--color-bg-subtle);
+      border-color: var(--color-border-strong);
+    }
+
+    /* Disabled Button */
+    .btn:disabled, .btn.state-disabled {
+      background-color: var(--color-bg-muted);
+      border-color: transparent;
+      color: var(--color-text-muted);
+      cursor: not-allowed;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    /* Button Sizes */
+    .btn-sm {
+      min-height: 36px;
+      font-size: var(--font-size-sm);
+      padding: 0 var(--space-3);
+    }
+    .btn-lg {
+      min-height: 52px;
+      font-size: var(--font-size-lg);
+      padding: 0 var(--space-6);
+    }
+
+    /* ==========================================================================
+       KOMPONEN 2: Form Inputs & Slider
+       ========================================================================== */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+      margin-bottom: var(--space-4);
+      max-width: 360px;
+    }
+    .form-label {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-primary);
+    }
+    .form-helper {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-muted);
+    }
+    .form-error-msg {
+      font-size: var(--font-size-xs);
+      color: var(--color-feedback-error);
+      font-weight: var(--font-weight-medium);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .form-control {
+      min-height: var(--touch-target-min);
+      padding: 0 var(--space-3);
+      font-family: inherit;
+      font-size: var(--font-size-base);
+      color: var(--color-text-primary);
+      background-color: var(--color-bg-surface);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+      width: 100%;
+    }
+    .form-control:focus, .form-control.state-focus {
+      outline: none;
+      border-color: var(--color-primary);
+      box-shadow: 0 0 0 3px var(--color-primary-100);
+    }
+    .form-control:disabled, .form-control.state-disabled {
+      background-color: var(--color-bg-subtle);
+      border-color: var(--color-border-subtle);
+      color: var(--color-text-muted);
+      cursor: not-allowed;
+    }
+    .form-control.state-error {
+      border-color: var(--color-feedback-error);
+      box-shadow: 0 0 0 3px var(--color-feedback-error-bg);
+    }
+
+    /* Range Slider */
+    .range-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      max-width: 360px;
+    }
+    .range-slider {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 8px;
+      border-radius: var(--radius-full);
+      background: var(--color-border-default);
+      outline: none;
+      min-height: auto;
+    }
+    .range-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 24px;
+      height: 24px;
+      border-radius: var(--radius-full);
+      background: var(--color-primary);
+      cursor: pointer;
+      border: 2px solid var(--color-bg-surface);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Checkbox & Radio */
+    .checkbox-label {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+      min-height: var(--touch-target-min);
+    }
+    .checkbox-input {
+      width: 20px;
+      height: 20px;
+      border-radius: var(--radius-sm);
+      accent-color: var(--color-primary);
+      cursor: pointer;
+    }
+
+    /* ==========================================================================
+       KOMPONEN 3: Badge Status Stok & Feedback
+       ========================================================================== */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-semibold);
+      border: 1px solid transparent;
+      width: fit-content;
+    }
+    .badge::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .badge-available {
+      background-color: var(--color-status-available-bg);
+      color: var(--color-status-available-text);
+      border-color: var(--color-status-available-border);
+    }
+    .badge-available::before {
+      background-color: var(--color-wa);
+    }
+
+    .badge-booking {
+      background-color: var(--color-status-booking-bg);
+      color: var(--color-status-booking-text);
+      border-color: var(--color-status-booking-border);
+    }
+    .badge-booking::before {
+      background-color: var(--color-feedback-warning);
+    }
+
+    .badge-sold {
+      background-color: var(--color-status-sold-bg);
+      color: var(--color-status-sold-text);
+      border-color: var(--color-status-sold-border);
+    }
+    .badge-sold::before {
+      background-color: var(--color-text-muted);
+    }
+
+    .badge-promo {
+      background-color: var(--color-accent-50);
+      color: var(--color-accent);
+      border-color: var(--color-accent-100);
+    }
+    .badge-promo::before {
+      background-color: var(--color-accent);
+    }
+
+    /* ==========================================================================
+       KOMPONEN 4: Kartu Mobil (Car Card)
+       ========================================================================== */
+    .car-card {
+      background-color: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+      max-width: 340px;
+      display: flex;
+      flex-direction: column;
+    }
+    .car-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--color-border-strong);
+    }
+    .car-card-img-wrap {
+      position: relative;
+      width: 100%;
+      height: 190px;
+      background-color: var(--color-bg-subtle);
+      overflow: hidden;
+    }
+    .car-card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .car-card-badge-pos {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 2;
+    }
+    .car-card-body {
+      padding: var(--space-4);
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      gap: var(--space-2);
+    }
+    .car-card-title {
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-text-primary);
+      line-height: var(--line-height-snug);
+    }
+    .car-card-specs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      color: var(--color-text-muted);
+      font-size: var(--font-size-xs);
+    }
+    .spec-pill {
+      background-color: var(--color-bg-subtle);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+    }
+    .car-card-price-box {
+      margin-top: var(--space-2);
+      padding-top: var(--space-2);
+      border-top: 1px solid var(--color-border-subtle);
+    }
+    .car-card-price {
+      font-size: var(--font-size-xl);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+    }
+    .car-card-installment {
+      font-size: var(--font-size-xs);
+      color: var(--color-text-secondary);
+    }
+    .car-card-installment span {
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-accent);
+    }
+    .car-card-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-2);
+      margin-top: var(--space-3);
+    }
+
+    /* ==========================================================================
+       KOMPONEN 5: Header & Navigasi
+       ========================================================================== */
+    .site-header {
+      background-color: var(--color-bg-surface);
+      border-bottom: 1px solid var(--color-border-subtle);
+      padding: var(--space-3) var(--space-4);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+    }
+    .site-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-size: var(--font-size-lg);
+      font-weight: var(--font-weight-bold);
+      color: var(--color-primary);
+      text-decoration: none;
+    }
+    .site-nav {
+      display: flex;
+      gap: var(--space-4);
+      list-style: none;
+    }
+    .site-nav a {
+      color: var(--color-text-secondary);
+      text-decoration: none;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      padding: var(--space-2) 0;
+      border-bottom: 2px solid transparent;
+      transition: color var(--transition-fast), border-color var(--transition-fast);
+    }
+    .site-nav a:hover, .site-nav a.active {
+      color: var(--color-primary);
+      border-bottom-color: var(--color-primary);
+    }
+    .nav-toggle-btn {
+      display: none;
+      background: none;
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      font-size: var(--font-size-sm);
+      cursor: pointer;
+    }
+    @media (max-width: 768px) {
+      .site-nav { display: none; }
+      .nav-toggle-btn { display: inline-flex; }
+    }
+
+    /* ==========================================================================
+       KOMPONEN 6: Footer
+       ========================================================================== */
+    .site-footer {
+      background-color: #0F172A;
+      color: #94A3B8;
+      padding: var(--space-8) var(--space-6);
+      border-radius: var(--radius-lg);
+      margin-top: var(--space-6);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: var(--space-6);
+      margin-bottom: var(--space-6);
+    }
+    .footer-col h4 {
+      color: #FFFFFF;
+      font-size: var(--font-size-base);
+      margin-bottom: var(--space-3);
+    }
+    .footer-col p, .footer-col a {
+      font-size: var(--font-size-sm);
+      color: #94A3B8;
+      text-decoration: none;
+      line-height: var(--line-height-relaxed);
+    }
+    .footer-col a:hover {
+      color: #FFFFFF;
+    }
+    .footer-bottom {
+      border-top: 1px solid #334155;
+      padding-top: var(--space-4);
+      text-align: center;
+      font-size: var(--font-size-xs);
+    }
+
+    /* ==========================================================================
+       KOMPONEN 7: Tombol WhatsApp & Telepon Melayang (Floating CTA)
+       ========================================================================== */
+    .floating-cta-container {
+      position: fixed;
+      bottom: var(--space-5);
+      right: var(--space-5);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      z-index: var(--z-floating-cta);
+    }
+    .floating-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-2);
+      padding: 0 var(--space-4);
+      min-height: 48px;
+      border-radius: var(--radius-full);
+      text-decoration: none;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-bold);
+      box-shadow: var(--shadow-floating);
+      transition: transform var(--transition-fast);
+    }
+    .floating-btn:hover {
+      transform: scale(1.05);
+    }
+    .floating-btn-wa {
+      background-color: var(--color-wa);
+      color: var(--color-wa-text);
+    }
+    .floating-btn-phone {
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* ==========================================================================
+       KOMPONEN 8: Pagination
+       ========================================================================== */
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: var(--space-1);
+      list-style: none;
+    }
+    .page-btn {
+      min-width: 44px;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md);
+      background: var(--color-bg-surface);
+      color: var(--color-text-primary);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-medium);
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color var(--transition-fast);
+    }
+    .page-btn:hover {
+      background-color: var(--color-bg-subtle);
+    }
+    .page-btn.active {
+      background-color: var(--color-primary);
+      color: var(--color-primary-text);
+      border-color: var(--color-primary);
+    }
+    .page-btn:disabled, .page-btn.disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      pointer-events: none;
+    }
+
+    /* ==========================================================================
+       KOMPONEN 9: Panel Filter & Drawer Mobile
+       ========================================================================== */
+    .filter-panel {
+      background-color: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg);
+      padding: var(--space-5);
+      max-width: 320px;
+    }
+    .filter-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-4);
+      padding-bottom: var(--space-2);
+      border-bottom: 1px solid var(--color-border-subtle);
+    }
+    .filter-header h3 {
+      font-size: var(--font-size-lg);
+      color: var(--color-text-primary);
+    }
+    .filter-reset {
+      font-size: var(--font-size-xs);
+      color: var(--color-accent);
+      cursor: pointer;
+      text-decoration: underline;
+      background: none;
+      border: none;
+    }
+    .filter-section {
+      margin-bottom: var(--space-4);
+    }
+    .filter-section-title {
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      margin-bottom: var(--space-2);
+      color: var(--color-text-secondary);
+    }
+
+    /* ==========================================================================
+       KOMPONEN 10: Alert & Toast Box
+       ========================================================================== */
+    .alert {
+      padding: var(--space-4);
+      border-radius: var(--radius-md);
+      border: 1px solid transparent;
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-3);
+      font-size: var(--font-size-sm);
+      margin-bottom: var(--space-3);
+      max-width: 480px;
+    }
+    .alert-icon {
+      font-weight: bold;
+      font-size: var(--font-size-lg);
+      line-height: 1;
+    }
+    .alert-content {
+      flex: 1;
+    }
+    .alert-title {
+      font-weight: var(--font-weight-semibold);
+      margin-bottom: 2px;
+    }
+
+    .alert-success {
+      background-color: var(--color-feedback-success-bg);
+      border-color: var(--color-status-available-border);
+      color: var(--color-feedback-success-text);
+    }
+    .alert-error {
+      background-color: var(--color-feedback-error-bg);
+      border-color: #FCA5A5;
+      color: var(--color-feedback-error-text);
+    }
+    .alert-warning {
+      background-color: var(--color-feedback-warning-bg);
+      border-color: var(--color-status-booking-border);
+      color: var(--color-feedback-warning-text);
+    }
+    .alert-info {
+      background-color: var(--color-feedback-info-bg);
+      border-color: #93C5FD;
+      color: var(--color-feedback-info-text);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header Panduan -->
+    <header class="guide-header">
+      <h1>Pola & Komponen UI (T-05)</h1>
+      <p>Kompilasi mockup komponen statis untuk <strong>Website Jual Mobil Bekas</strong>. Desain mematuhi sistem token di <code>tokens.css</code>, siap dikonsumsi Developer.</p>
+      <div class="badge-guide">Standar WCAG AA • Mobile Touch Target ≥ 48px</div>
+    </header>
+
+    <!-- 1. Tombol -->
+    <section class="section-block">
+      <h2>1. Tombol (Buttons) & Varian State</h2>
+      <p class="desc">Memenuhi target sentuh mobile minimal 48px dengan kontras warna teruji.</p>
+      
+      <div class="state-grid">
+        <div class="state-item">
+          <span class="state-label">Primary (Default)</span>
+          <button class="btn btn-primary">Lihat Detail</button>
+        </div>
+        <div class="state-item">
+          <span class="state-label">Primary (Hover)</span>
+          <button class="btn btn-primary state-hover">Lihat Detail</button>
+        </div>
+        <div class="state-item">
+          <span class="state-label">Primary (Focus)</span>
+          <button class="btn btn-primary state-focus">Lihat Detail</button>
+        </div>
+        <div class="state-item">
+          <span class="state-label">Disabled</span>
+          <button class="btn btn-primary state-disabled" disabled>Nonaktif</button>
+        </div>
+      </div>
+
+      <div class="state-grid">
+        <div class="state-item">
+          <span class="state-label">Accent / Hot CTA</span>
+          <button class="btn btn-accent">Ajukan Kredit</button>
+        </div>
+        <div class="state-item">
+          <span class="state-label">WhatsApp Closing CTA</span>
+          <button class="btn btn-wa">💬 Chat WhatsApp</button>
+        </div>
+        <div class="state-item">
+          <span class="state-label">Outline / Sekunder</span>
+          <button class="btn btn-outline">Simulasi Cicilan</button>
+        </div>
+        <div class="state-item">
+          <span class="state-label">Ukuran Kecil (36px)</span>
+          <button class="btn btn-outline btn-sm">Filter</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. Form Input, Select, Slider -->
+    <section class="section-block">
+      <h2>2. Input, Dropdown & Slider Simulasi</h2>
+      <p class="desc">Lengkap dengan state default, fokus, disabled, dan validasi error.</p>
+
+      <div style="display: flex; flex-wrap: wrap; gap: var(--space-6);">
+        <!-- Input States -->
+        <div style="flex: 1; min-width: 280px;">
+          <div class="form-group">
+            <label class="form-label">Nama Lengkap (Default)</label>
+            <input type="text" class="form-control" placeholder="Contoh: Budi Santoso">
+            <span class="form-helper">Masukkan nama sesuai KTP</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nomor WhatsApp (Fokus State)</label>
+            <input type="tel" class="form-control state-focus" value="08123456789">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Nomor Polisi (Error State)</label>
+            <input type="text" class="form-control state-error" value="B 123">
+            <span class="form-error-msg">⚠️ Format plat nomor tidak lengkap</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Kode Referal (Disabled)</label>
+            <input type="text" class="form-control state-disabled" disabled value="DEALER-OFFLINE">
+          </div>
+        </div>
+
+        <!-- Select & Slider -->
+        <div style="flex: 1; min-width: 280px;">
+          <div class="form-group">
+            <label class="form-label">Merek Mobil (Select)</label>
+            <select class="form-control">
+              <option>Semua Merek</option>
+              <option>Toyota</option>
+              <option>Honda</option>
+              <option>Daihatsu</option>
+              <option>Mitsubishi</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Simulasi Uang Muka (DP: Rp 35.000.000)</label>
+            <div class="range-wrap">
+              <input type="range" class="range-slider" min="20" max="100" value="35">
+              <div style="display: flex; justify-content: space-between; font-size: var(--font-size-xs); color: var(--color-text-muted);">
+                <span>20% (Rp 20 Jt)</span>
+                <span>50% (Rp 50 Jt)</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox-input" checked>
+              <span>Hubungi saya segera via WhatsApp</span>
+            </label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. Badge Status Stok & Feedback -->
+    <section class="section-block">
+      <h2>3. Badge Status Stok & Label Promo</h2>
+      <p class="desc">Memberikan kejelasan status unit mobil bekas dan promosi.</p>
+      <div class="state-grid">
+        <div class="state-item">
+          <span class="state-label">Tersedia</span>
+          <span class="badge badge-available">Tersedia (Ready)</span>
+        </div>
+        <div class="state-item">
+          <span class="state-label">Booking</span>
+          <span class="badge badge-booking">Sedang Booking</span>
+        </div>
+        <div class="state-item">
+          <span class="state-label">Terjual</span>
+          <span class="badge badge-sold">Sudah Terjual</span>
+        </div>
+        <div class="state-item">
+          <span class="state-label">Aksen Promo</span>
+          <span class="badge badge-promo">🔥 Diskon Cuci Gudang</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Kartu Mobil (Car Card) -->
+    <section class="section-block">
+      <h2>4. Kartu Mobil (Car Card Component)</h2>
+      <p class="desc">Fokus visual foto, harga transparan, spesifikasi kunci, dan CTA ganda (Detail & WA).</p>
+      <div style="display: flex; flex-wrap: wrap; gap: var(--space-6);">
+        
+        <!-- Card 1: Tersedia -->
+        <article class="car-card">
+          <div class="car-card-img-wrap">
+            <span class="car-card-badge-pos badge badge-available">Tersedia</span>
+            <!-- Placeholder mobil SVG netral -->
+            <svg width="100%" height="100%" viewBox="0 0 400 240" fill="#E2E8F0" xmlns="http://www.w3.org/2000/svg">
+              <rect width="100%" height="100%" fill="#E2E8F0"/>
+              <path d="M70 160L110 95H280L330 160H70Z" fill="#94A3B8"/>
+              <circle cx="120" cy="170" r="28" fill="#334155"/>
+              <circle cx="280" cy="170" r="28" fill="#334155"/>
+              <text x="50%" y="130" text-anchor="middle" fill="#0F172A" font-size="16" font-family="sans-serif">Toyota Avanza 1.3 G</text>
+            </svg>
+          </div>
+          <div class="car-card-body">
+            <h3 class="car-card-title">Toyota Avanza 1.3 G Manual 2020</h3>
+            <div class="car-card-specs">
+              <span class="spec-pill">2020</span>
+              <span class="spec-pill">Manual</span>
+              <span class="spec-pill">45.000 km</span>
+              <span class="spec-pill">Bensin</span>
+            </div>
+            <div class="car-card-price-box">
+              <div class="car-card-price">Rp 178.000.000</div>
+              <div class="car-card-installment">Cicilan mulai <span>Rp 3,2 Jt/bln</span></div>
+            </div>
+            <div class="car-card-actions">
+              <a href="#" class="btn btn-outline btn-sm">Lihat Detail</a>
+              <a href="#" class="btn btn-wa btn-sm">💬 Tanya WA</a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Card 2: Terjual / Booking -->
+        <article class="car-card">
+          <div class="car-card-img-wrap">
+            <span class="car-card-badge-pos badge badge-booking">Booking</span>
+            <svg width="100%" height="100%" viewBox="0 0 400 240" fill="#E2E8F0" xmlns="http://www.w3.org/2000/svg">
+              <rect width="100%" height="100%" fill="#CBD5E1"/>
+              <path d="M80 155L120 90H270L320 155H80Z" fill="#64748B"/>
+              <circle cx="130" cy="165" r="26" fill="#1E293B"/>
+              <circle cx="270" cy="165" r="26" fill="#1E293B"/>
+              <text x="50%" y="130" text-anchor="middle" fill="#0F172A" font-size="16" font-family="sans-serif">Honda Brio RS</text>
+            </svg>
+          </div>
+          <div class="car-card-body">
+            <h3 class="car-card-title">Honda Brio 1.2 RS CVT 2021</h3>
+            <div class="car-card-specs">
+              <span class="spec-pill">2021</span>
+              <span class="spec-pill">Matic</span>
+              <span class="spec-pill">28.000 km</span>
+              <span class="spec-pill">Bensin</span>
+            </div>
+            <div class="car-card-price-box">
+              <div class="car-card-price">Rp 165.000.000</div>
+              <div class="car-card-installment">Cicilan mulai <span>Rp 2,9 Jt/bln</span></div>
+            </div>
+            <div class="car-card-actions">
+              <a href="#" class="btn btn-outline btn-sm">Lihat Detail</a>
+              <button class="btn btn-outline btn-sm state-disabled" disabled>Dalam Proses</button>
+            </div>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- 5. Header / Navigasi -->
+    <section class="section-block">
+      <h2>5. Header & Navigasi</h2>
+      <p class="desc">Navigasi mobile-friendly dengan brand identity dan menu cepat.</p>
+      <header class="site-header">
+        <a href="#" class="site-brand">
+          🚗 <span>BintangMobil</span>
+        </a>
+        <ul class="site-nav">
+          <li><a href="#" class="active">Beranda</a></li>
+          <li><a href="#">Katalog Mobil</a></li>
+          <li><a href="#">Simulasi Kredit</a></li>
+          <li><a href="#">Tukar Tambah</a></li>
+          <li><a href="#">Testimoni</a></li>
+          <li><a href="#">Kontak</a></li>
+        </ul>
+        <button class="nav-toggle-btn">☰ Menu</button>
+      </header>
+    </section>
+
+    <!-- 6. Footer -->
+    <section class="section-block">
+      <h2>6. Footer</h2>
+      <p class="desc">Informasi kontak, jam operasional showroom, dan legalitas.</p>
+      <footer class="site-footer">
+        <div class="footer-grid">
+          <div class="footer-col">
+            <h4>Bintang Mobil Bekas</h4>
+            <p>Showroom mobil bekas berkualitas, bergaransi bebas banjir & bebas tabrakan besar. Transaksi aman & proses kredit cepat.</p>
+          </div>
+          <div class="footer-col">
+            <h4>Navigasi Cepat</h4>
+            <p><a href="#">Katalog Mobil Terbaru</a></p>
+            <p><a href="#">Simulasi DP & Cicilan</a></p>
+            <p><a href="#">Form Tukar Tambah</a></p>
+            <p><a href="#">Syarat Pengajuan Kredit</a></p>
+          </div>
+          <div class="footer-col">
+            <h4>Kontak & Showroom</h4>
+            <p>📍 Jl. Otista Raya No. 45, Jakarta Timur</p>
+            <p>🕒 Buka Setiap Hari: 09.00 - 18.00 WIB</p>
+            <p>📞 Telepon: (021) 8590-1234</p>
+            <p>💬 WhatsApp: 0812-9876-5432</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          © 2026 Bintang Mobil Bekas. Hak Cipta Dilindungi Undang-Undang.
+        </div>
+      </footer>
+    </section>
+
+    <!-- 7. Pagination -->
+    <section class="section-block">
+      <h2>7. Pagination</h2>
+      <p class="desc">Ukuran tombol ramah sentuhan (min 44px) untuk browsing katalog mobil.</p>
+      <ul class="pagination">
+        <li><button class="page-btn disabled" disabled>‹</button></li>
+        <li><button class="page-btn active">1</button></li>
+        <li><button class="page-btn">2</button></li>
+        <li><button class="page-btn">3</button></li>
+        <li><span style="padding: 0 8px; color: var(--color-text-muted);">...</span></li>
+        <li><button class="page-btn">8</button></li>
+        <li><button class="page-btn">›</button></li>
+      </ul>
+    </section>
+
+    <!-- 8. Panel Filter (Drawer di Mobile) -->
+    <section class="section-block">
+      <h2>8. Panel Filter Katalog (Mobile Drawer / Desktop Sidebar)</h2>
+      <p class="desc">Mudah difilter berdasarkan merek, harga, dan transmisi.</p>
+      
+      <div class="filter-panel">
+        <div class="filter-header">
+          <h3>Filter Mobil</h3>
+          <button class="filter-reset">Reset</button>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-section-title">Merek Mobil</div>
+          <select class="form-control" style="margin-bottom: var(--space-2);">
+            <option>Semua Merek</option>
+            <option>Toyota (12 unit)</option>
+            <option>Honda (8 unit)</option>
+            <option>Suzuki (5 unit)</option>
+          </select>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-section-title">Rentang Harga</div>
+          <select class="form-control" style="margin-bottom: var(--space-2);">
+            <option>Semua Rentang</option>
+            <option>&lt; Rp 150 Juta</option>
+            <option>Rp 150 - 250 Juta</option>
+            <option>&gt; Rp 250 Juta</option>
+          </select>
+        </div>
+
+        <div class="filter-section">
+          <div class="filter-section-title">Transmisi</div>
+          <div style="display: flex; gap: var(--space-4);">
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox-input" checked>
+              <span>Matic</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" class="checkbox-input" checked>
+              <span>Manual</span>
+            </label>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" style="width: 100%; margin-top: var(--space-2);">Terapkan Filter</button>
+      </div>
+    </section>
+
+    <!-- 9. Alert & Toast -->
+    <section class="section-block">
+      <h2>9. Feedback / Alert / Toast Notification</h2>
+      <p class="desc">Umpan balik saat form dikirim atau terjadi galat.</p>
+
+      <div class="alert alert-success">
+        <span class="alert-icon">✓</span>
+        <div class="alert-content">
+          <div class="alert-title">Permintaan Berhasil Terkirim</div>
+          Tim sales kami akan menghubungi Anda via WhatsApp dalam waktu maksimal 15 menit.
+        </div>
+      </div>
+
+      <div class="alert alert-error">
+        <span class="alert-icon">✕</span>
+        <div class="alert-content">
+          <div class="alert-title">Gagal Mengirim Formulir</div>
+          Nomor WhatsApp tidak valid. Pastikan diawali dengan 08 atau 62.
+        </div>
+      </div>
+
+      <div class="alert alert-warning">
+        <span class="alert-icon">!</span>
+        <div class="alert-content">
+          <div class="alert-title">Unit Sedang Dalam Negosiasi</div>
+          Mobil ini telah dibooking oleh calon pembeli lain per hari ini.
+        </div>
+      </div>
+
+      <div class="alert alert-info">
+        <span class="alert-icon">ℹ</span>
+        <div class="alert-content">
+          <div class="alert-title">Simulasi Bersifat Estimasi</div>
+          Perhitungan cicilan belum termasuk asuransi dan biaya administrasi leasing resmi.
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- 10. Tombol WA & Telepon Melayang (Always Visible) -->
+  <aside class="floating-cta-container">
+    <a href="tel:02185901234" class="floating-btn floating-btn-phone" title="Hubungi Telepon Showroom">
+      📞 <span>Telepon</span>
+    </a>
+    <a href="https://wa.me/6281298765432" target="_blank" class="floating-btn floating-btn-wa" title="Konsultasi Cepat via WhatsApp">
+      💬 <span>WhatsApp</span>
+    </a>
+  </aside>
+
+</body>
+</html>

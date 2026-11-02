@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalkulator Simulasi Kredit Mobil Bekas — Bintang Mobil</title>
+  <link rel="stylesheet" href="../tokens.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family-sans);
+      background-color: var(--color-bg-canvas);
+      color: var(--color-text-primary);
+      line-height: var(--line-height-normal);
+      padding-bottom: 90px;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1040px; margin: 0 auto; padding: 0 var(--space-4); }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      background: var(--color-bg-surface);
+      border-bottom: 1px solid var(--color-border-subtle);
+      z-index: var(--z-sticky);
+      box-shadow: var(--shadow-sm);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .brand-logo { font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-primary); }
+    .nav-links { display: flex; gap: var(--space-5); list-style: none; }
+    .nav-links a { font-size: var(--font-size-sm); color: var(--color-text-secondary); padding: 8px 0; }
+    .nav-links a.active { color: var(--color-primary); font-weight: 600; }
+
+    .breadcrumb { padding: var(--space-4) 0; font-size: var(--font-size-xs); color: var(--color-text-muted); display: flex; gap: var(--space-2); }
+    
+    .calc-layout {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: var(--space-8);
+      align-items: start;
+      margin-top: var(--space-4);
+    }
+
+    .card {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-sm);
+    }
+    .card h2 {
+      font-size: var(--font-size-2xl);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-2);
+    }
+    .card p.sub {
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      margin-bottom: var(--space-6);
+    }
+
+    .form-group {
+      margin-bottom: var(--space-5);
+    }
+    .form-label {
+      display: block;
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      color: var(--color-text-primary);
+      margin-bottom: var(--space-2);
+    }
+    .form-control {
+      width: 100%;
+      min-height: 48px;
+      padding: 0 var(--space-3);
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      color: var(--color-text-primary);
+      background: var(--color-bg-surface);
+      outline: none;
+    }
+    .form-control:focus { border-color: var(--color-primary); box-shadow: 0 0 0 3px var(--color-primary-100); }
+
+    .tenor-pills {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-2);
+    }
+    .tenor-btn {
+      min-height: 44px;
+      border: 1px solid var(--color-border-default);
+      border-radius: var(--radius-md);
+      background: var(--color-bg-surface);
+      font-size: var(--font-size-sm);
+      font-weight: var(--font-weight-semibold);
+      cursor: pointer;
+    }
+    .tenor-btn.active {
+      background: var(--color-primary);
+      color: #FFF;
+      border-color: var(--color-primary);
+    }
+
+    /* Result Card */
+    .result-box {
+      background: linear-gradient(135deg, #1E3A8A 0%, #0F172A 100%);
+      color: #FFFFFF;
+      border-radius: var(--radius-xl);
+      padding: var(--space-6);
+      box-shadow: var(--shadow-lg);
+    }
+    .estimation-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: rgba(254, 243, 199, 0.2);
+      border: 1px solid #FCD34D;
+      color: #FDE68A;
+      border-radius: var(--radius-full);
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-bold);
+      letter-spacing: 0.05em;
+      margin-bottom: var(--space-4);
+    }
+    .result-monthly-label { font-size: var(--font-size-sm); color: #CBD5E1; }
+    .result-monthly-price {
+      font-size: clamp(2rem, 4vw, 2.75rem);
+      font-weight: var(--font-weight-bold);
+      color: #F8FAFC;
+      margin: var(--space-1) 0 var(--space-4);
+    }
+    .result-breakdown {
+      border-top: 1px solid rgba(255,255,255,0.15);
+      padding-top: var(--space-4);
+      margin-bottom: var(--space-6);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-2);
+      font-size: var(--font-size-sm);
+    }
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      color: #CBD5E1;
+    }
+    .breakdown-row strong { color: #FFF; }
+
+    .disclaimer-box {
+      background: rgba(255,255,255,0.08);
+      border-radius: var(--radius-md);
+      padding: var(--space-3);
+      font-size: var(--font-size-xs);
+      color: #94A3B8;
+      line-height: var(--line-height-snug);
+      margin-bottom: var(--space-5);
+    }
+
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
+      width: 100%;
+      min-height: 50px;
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-base);
+      font-weight: var(--font-weight-bold);
+      cursor: pointer;
+      border: none;
+      text-decoration: none;
+      margin-bottom: var(--space-3);
+    }
+    .btn-wa { background: var(--color-wa); color: #FFF; }
+    .btn-wa:hover { background: var(--color-wa-hover); }
+
+    @media (max-width: 800px) {
+      .calc-layout { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="beranda.html" class="brand-logo">🚗 <span>Bintang Mobil</span></a>
+      <ul class="nav-links">
+        <li><a href="beranda.html">Beranda</a></li>
+        <li><a href="katalog.html">Katalog Mobil</a></li>
+        <li><a href="simulasi-kredit.html" class="active">Simulasi Kredit</a></li>
+        <li><a href="tukar-tambah.html">Tukar Tambah</a></li>
+        <li><a href="kontak.html">Kontak</a></li>
+      </ul>
+      <a href="https://wa.me/6281298765432" target="_blank" class="btn-wa" style="width: auto; min-height: 38px; padding: 0 14px; font-size: 14px;">💬 Chat WA</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav class="breadcrumb">
+      <a href="beranda.html">Beranda</a>
+      <span>›</span>
+      <span style="color: var(--color-text-primary); font-weight: 600;">Kalkulator Simulasi Kredit</span>
+    </nav>
+
+    <div class="calc-layout">
+      <!-- Input Kalkulator -->
+      <section class="card">
+        <h2>Simulasi Kredit Mobil Bekas</h2>
+        <p class="sub">Hitung perkiraan angsuran bulanan sesuai kemampuan uang muka (DP) dan pilihan tenor Anda.</p>
+
+        <div class="form-group">
+          <label class="form-label" for="car-price">Harga Mobil (OTR)</label>
+          <input type="text" id="car-price" class="form-control" value="Rp 178.000.000">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="dp-amount">Uang Muka (DP: 20%)</label>
+          <input type="text" id="dp-amount" class="form-control" value="Rp 35.600.000">
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Pilihan Jangka Waktu (Tenor)</label>
+          <div class="tenor-pills">
+            <button class="tenor-btn">1 Tahun<br><small>12 Bln</small></button>
+            <button class="tenor-btn">2 Tahun<br><small>24 Bln</small></button>
+            <button class="tenor-btn">3 Tahun<br><small>36 Bln</small></button>
+            <button class="tenor-btn active">4 Tahun<br><small>48 Bln</small></button>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="interest">Estimasi Suku Bunga per Tahun</label>
+          <input type="text" id="interest" class="form-control" value="8.5% (Standar Leasing Mobil Bekas)" readonly style="background: var(--color-bg-subtle);">
+        </div>
+      </section>
+
+      <!-- Hasil Estimasi Cicilan -->
+      <aside class="result-box">
+        <span class="estimation-badge">⚠️ LABEL: HASIL ESTIMASI SEMENTARA</span>
+        <div class="result-monthly-label">Estimasi Cicilan per Bulan:</div>
+        <div class="result-monthly-price">Rp 3.420.000</div>
+
+        <div class="result-breakdown">
+          <div class="breakdown-row"><span>Harga Kendaraan:</span><strong>Rp 178.000.000</strong></div>
+          <div class="breakdown-row"><span>Uang Muka (DP 20%):</span><strong>Rp 35.600.000</strong></div>
+          <div class="breakdown-row"><span>Pokok Hutang:</span><strong>Rp 142.400.000</strong></div>
+          <div class="breakdown-row"><span>Tenor Pembiayaan:</span><strong>48 Bulan (4 Tahun)</strong></div>
+        </div>
+
+        <div class="disclaimer-box">
+          *<strong>PENTING:</strong> Perhitungan di atas bersifat estimasi indikatif. Angka final resmi (termasuk biaya asuransi all-risk/TLO, administrasi, dan provisi leasing) ditentukan oleh lembaga pembiayaan saat survei kredit.
+        </div>
+
+        <a href="https://wa.me/6281298765432?text=Halo%20Bintang%20Mobil,%20saya%20sudah%20hitung%20simulasi%20kredit%20harga%20Rp178jt%20dengan%20DP%20Rp35,6jt%20dan%20tenor%2048%20bulan.%20Bisa%20bantu%20prosesnya?" target="_blank" class="btn btn-wa">
+          💬 Kirim Hasil Simulasi ke WhatsApp Sales
+        </a>
+      </aside>
+    </div>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Galeri Serah Terima & Testimoni Pelanggan — Bintang Mobil</title>
+  <link rel="stylesheet" href="../tokens.css">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: var(--font-family-sans);
+      background-color: var(--color-bg-canvas);
+      color: var(--color-text-primary);
+      line-height: var(--line-height-normal);
+      padding-bottom: 90px;
+    }
+    a { color: inherit; text-decoration: none; }
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 var(--space-4); }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      background: var(--color-bg-surface);
+      border-bottom: 1px solid var(--color-border-subtle);
+      z-index: var(--z-sticky);
+      box-shadow: var(--shadow-sm);
+    }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .brand-logo { font-size: var(--font-size-xl); font-weight: var(--font-weight-bold); color: var(--color-primary); }
+    .nav-links { display: flex; gap: var(--space-5); list-style: none; }
+    .nav-links a { font-size: var(--font-size-sm); color: var(--color-text-secondary); padding: 8px 0; }
+    .nav-links a.active { color: var(--color-primary); font-weight: 600; }
+
+    .breadcrumb { padding: var(--space-4) 0; font-size: var(--font-size-xs); color: var(--color-text-muted); display: flex; gap: var(--space-2); }
+    
+    .page-header { text-align: center; max-width: 680px; margin: var(--space-4) auto var(--space-8); }
+    .page-header h1 { font-size: var(--font-size-3xl); color: var(--color-text-primary); margin-bottom: var(--space-2); }
+    .page-header p { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: var(--space-6);
+    }
+    .testi-card {
+      background: var(--color-bg-surface);
+      border: 1px solid var(--color-border-subtle);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+    }
+    .testi-img {
+      height: 200px;
+      background: var(--color-bg-subtle);
+      position: relative;
+    }
+    .testi-body {
+      padding: var(--space-5);
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+    .testi-rating { color: #F59E0B; margin-bottom: var(--space-2); font-size: var(--font-size-sm); }
+    .testi-quote { font-size: var(--font-size-sm); color: var(--color-text-secondary); line-height: var(--line-height-relaxed); margin-bottom: var(--space-4); flex-grow: 1; }
+    .testi-footer {
+      border-top: 1px solid var(--color-border-subtle);
+      padding-top: var(--space-3);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: var(--font-size-xs);
+    }
+    .buyer-name { font-weight: var(--font-weight-bold); color: var(--color-text-primary); }
+    .buyer-car { color: var(--color-primary); font-weight: 500; }
+
+    .btn-wa {
+      background: var(--color-wa);
+      color: #FFF;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 var(--space-4);
+      min-height: 40px;
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+    }
+
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="navbar">
+    <div class="container nav-inner">
+      <a href="beranda.html" class="brand-logo">🚗 <span>Bintang Mobil</span></a>
+      <ul class="nav-links">
+        <li><a href="beranda.html">Beranda</a></li>
+        <li><a href="katalog.html">Katalog Mobil</a></li>
+        <li><a href="simulasi-kredit.html">Simulasi Kredit</a></li>
+        <li><a href="tukar-tambah.html">Tukar Tambah</a></li>
+        <li><a href="testimoni.html" class="active">Testimoni</a></li>
+        <li><a href="kontak.html">Kontak</a></li>
+      </ul>
+      <a href="https://wa.me/6281298765432" target="_blank" class="btn-wa">💬 Chat WA</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <nav class="breadcrumb">
+      <a href="beranda.html">Beranda</a>
+      <span>›</span>
+      <span style="color: var(--color-text-primary); font-weight: 600;">Galeri Serah Terima & Testimoni</span>
+    </nav>
+
+    <div class="page-header">
+      <h1>Bukti Nyata Kepuasan Pelanggan Kami</h1>
+      <p>Setiap mobil bekas yang keluar dari showroom kami adalah komitmen kualitas, integritas dokumen, dan pelayanan purna jual terbaik.</p>
+    </div>
+
+    <div class="gallery-grid">
+      <!-- Testi 1 -->
+      <article class="testi-card">
+        <div class="testi-img">
+          <svg width="100%" height="100%" viewBox="0 0 400 200" fill="#CBD5E1">
+            <rect width="100%" height="100%" fill="#E2E8F0"/>
+            <circle cx="200" cy="80" r="30" fill="#94A3B8"/>
+            <rect x="140" y="120" width="120" height="70" rx="10" fill="#64748B"/>
+            <text x="50%" y="180" text-anchor="middle" font-size="14" fill="#FFF">Foto Serah Terima: Avanza 2020</text>
+          </svg>
+        </div>
+        <div class="testi-body">
+          <div class="testi-rating">★★★★★ (5/5)</div>
+          <p class="testi-quote">"Awalnya ragu beli mobil bekas, tapi dijelaskan transparan semua hasil inspeksinya. Pas dicek di bengkel resmi langganan saya, mekaniknya bilang kondisi mobil istimewa dan bebas banjir. Terima kasih Bintang Mobil!"</p>
+          <div class="testi-footer">
+            <span class="buyer-name">Pak Hendra (Jakarta Barat)</span>
+            <span class="buyer-car">Toyota Avanza 2020</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Testi 2 -->
+      <article class="testi-card">
+        <div class="testi-img">
+          <svg width="100%" height="100%" viewBox="0 0 400 200" fill="#CBD5E1">
+            <rect width="100%" height="100%" fill="#DBEAFE"/>
+            <circle cx="200" cy="80" r="30" fill="#3B82F6"/>
+            <rect x="140" y="120" width="120" height="70" rx="10" fill="#1D4ED8"/>
+            <text x="50%" y="180" text-anchor="middle" font-size="14" fill="#FFF">Foto Serah Terima: Brio RS</text>
+          </svg>
+        </div>
+        <div class="testi-body">
+          <div class="testi-rating">★★★★★ (5/5)</div>
+          <p class="testi-quote">"Proses kredit dibantu sampai tuntas hanya dalam 2 hari kerja. Uang muka ringan dan angsuran sesuai simulasi di website. Mobil sampai rumah kinclong dan bersih banget!"</p>
+          <div class="testi-footer">
+            <span class="buyer-name">Ibu Siska (Depok)</span>
+            <span class="buyer-car">Honda Brio RS 2021</span>
+          </div>
+        </div>
+      </article>
+
+      <!-- Testi 3 -->
+      <article class="testi-card">
+        <div class="testi-img">
+          <svg width="100%" height="100%" viewBox="0 0 400 200" fill="#CBD5E1">
+            <rect width="100%" height="100%" fill="#DCFCE7"/>
+            <circle cx="200" cy="80" r="30" fill="#22C55E"/>
+            <rect x="140" y="120" width="120" height="70" rx="10" fill="#15803D"/>
+            <text x="50%" y="180" text-anchor="middle" font-size="14" fill="#FFF">Foto Serah Terima: Innova</text>
+          </svg>
+        </div>
+        <div class="testi-body">
+          <div class="testi-rating">★★★★★ (5/5)</div>
+          <p class="testi-quote">"Tukar tambah mobil lama saya dihargai sangat wajar, jauh lebih tinggi dari tawaran tempat lain. Nggak ribet, langsung potong DP untuk bawa pulang Innova Reborn."</p>
+          <div class="testi-footer">
+            <span class="buyer-name">Pak Doni (Tangerang)</span>
+            <span class="buyer-car">Toyota Innova Reborn 2018</span>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+
+</body>
+</html>
