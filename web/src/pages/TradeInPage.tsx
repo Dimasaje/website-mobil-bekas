@@ -9,6 +9,31 @@ const INDO_PHONE_REGEX = /^(?:\+62|62|0)8[1-9][0-9]{6,11}$/;
 
 export type FormMode = "tukar_tambah" | "jual" | "test_drive";
 
+export interface ModeResetState {
+  selectedCarId: string;
+  targetCarName: string;
+  preferredDate: string;
+  preferredTime: string;
+}
+
+// State yang harus dikosongkan saat pindah tab mode. Unit target hanya
+// dipertahankan bila datang dari query param dan tab awal mode itu aktif lagi.
+export function resetModeState(
+  next: FormMode,
+  initialMode: FormMode,
+  initialCarId: string,
+  initialTargetName: string,
+): ModeResetState {
+  const keepInitialTarget = next === initialMode;
+
+  return {
+    selectedCarId: keepInitialTarget ? initialCarId : "",
+    targetCarName: keepInitialTarget ? initialTargetName : "",
+    preferredDate: "",
+    preferredTime: "",
+  };
+}
+
 export function TradeInPage() {
   const [searchParams] = useSearchParams();
   const { settings: layoutSettings } = useLayoutSettings();
@@ -160,7 +185,7 @@ export function TradeInPage() {
         type: leadType,
         name: name.trim(),
         phone: phone.replace(/[\s-]/g, ""),
-        carId: selectedCarId || null,
+        carId: mode === "jual" ? null : selectedCarId || null,
         notes: notes.trim() || null,
         data: additionalData,
         honeypot: honeypot || undefined,
@@ -181,6 +206,28 @@ export function TradeInPage() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  // Ganti mode wajib membuang state yang khas mode sebelumnya, supaya lead
+  // tidak membawa mobil target dari tab lain dan banner error lama.
+  const changeMode = (next: FormMode) => {
+    if (next === mode) return;
+
+    const reset = resetModeState(
+      next,
+      initialMode,
+      initialCarId,
+      initialTargetName,
+    );
+
+    setMode(next);
+    setSubmitSuccess(false);
+    setSubmitError(null);
+    setFieldErrors({});
+    setSelectedCarId(reset.selectedCarId);
+    setTargetCarName(reset.targetCarName);
+    setPreferredDate(reset.preferredDate);
+    setPreferredTime(reset.preferredTime);
   };
 
   const showroomName = layoutSettings?.showroomName || "Bintang Mobil";
@@ -229,10 +276,7 @@ export function TradeInPage() {
       <div className="flex border-b border-slate-200 mb-8 overflow-x-auto gap-2">
         <button
           type="button"
-          onClick={() => {
-            setMode("tukar_tambah");
-            setSubmitSuccess(false);
-          }}
+          onClick={() => changeMode("tukar_tambah")}
           className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
             mode === "tukar_tambah"
               ? "border-blue-800 text-blue-800"
@@ -243,10 +287,7 @@ export function TradeInPage() {
         </button>
         <button
           type="button"
-          onClick={() => {
-            setMode("jual");
-            setSubmitSuccess(false);
-          }}
+          onClick={() => changeMode("jual")}
           className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
             mode === "jual"
               ? "border-blue-800 text-blue-800"
@@ -257,10 +298,7 @@ export function TradeInPage() {
         </button>
         <button
           type="button"
-          onClick={() => {
-            setMode("test_drive");
-            setSubmitSuccess(false);
-          }}
+          onClick={() => changeMode("test_drive")}
           className={`pb-3 px-4 text-sm font-bold border-b-2 transition-colors whitespace-nowrap cursor-pointer ${
             mode === "test_drive"
               ? "border-blue-800 text-blue-800"

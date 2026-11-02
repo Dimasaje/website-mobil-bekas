@@ -2,7 +2,7 @@ import { describe, expect, it } from "bun:test";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import { MemoryRouter } from "react-router-dom";
-import { TradeInPage } from "../src/pages/TradeInPage";
+import { TradeInPage, resetModeState } from "../src/pages/TradeInPage";
 
 describe("TradeInPage Component (T-24)", () => {
   it("exports TradeInPage component as a function", () => {
@@ -64,5 +64,62 @@ describe("TradeInPage Component (T-24)", () => {
     );
 
     expect(html).toContain("Jual Mobil Anda dengan Cepat &amp; Aman");
+  });
+});
+
+describe("TradeInPage mode switching (T-47)", () => {
+  it("clears the target car when leaving the initial mode", () => {
+    const reset = resetModeState(
+      "jual",
+      "tukar_tambah",
+      "car-uuid-1",
+      "Mobil Uji Coba Foto 2025",
+    );
+
+    expect(reset.selectedCarId).toBe("");
+    expect(reset.targetCarName).toBe("");
+  });
+
+  it("clears the target car when moving between non-initial modes", () => {
+    const reset = resetModeState(
+      "test_drive",
+      "jual",
+      "car-uuid-1",
+      "Honda Brio",
+    );
+
+    expect(reset.selectedCarId).toBe("");
+    expect(reset.targetCarName).toBe("");
+  });
+
+  it("restores the query-param target when returning to the initial mode", () => {
+    const reset = resetModeState(
+      "test_drive",
+      "test_drive",
+      "car-uuid-1",
+      "Honda Brio",
+    );
+
+    expect(reset.selectedCarId).toBe("car-uuid-1");
+    expect(reset.targetCarName).toBe("Honda Brio");
+  });
+
+  it("always clears test drive schedule fields", () => {
+    const reset = resetModeState(
+      "test_drive",
+      "tukar_tambah",
+      "car-uuid-1",
+      "Mobil Uji Coba Foto 2025",
+    );
+
+    expect(reset.preferredDate).toBe("");
+    expect(reset.preferredTime).toBe("");
+  });
+
+  it("does not keep a stale target when no query param was given", () => {
+    const reset = resetModeState("tukar_tambah", "tukar_tambah", "", "");
+
+    expect(reset.selectedCarId).toBe("");
+    expect(reset.targetCarName).toBe("");
   });
 });
