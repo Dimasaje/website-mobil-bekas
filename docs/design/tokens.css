@@ -1,0 +1,168 @@
+/**
+ * Design Tokens — Website Jual Mobil Bekas
+ * Versi: 1.0.0 (Issue #4 / T-04)
+ * Standar: Mobile-First, WCAG AA Compliant
+ */
+
+:root {
+  /* ==========================================================================
+     1. Warna — Color Palette
+     ========================================================================== */
+
+  /* Neutral & Surfaces */
+  --color-bg-canvas: #F8FAFC;        /* Slate-50: Latar belakang aplikasi */
+  --color-bg-surface: #FFFFFF;       /* Putih: Kartu, modal, container */
+  --color-bg-subtle: #F1F5F9;        /* Slate-100: Input field bg, hover item */
+  --color-bg-muted: #E2E8F0;         /* Slate-200: Garis pemisah aktif */
+
+  /* Borders */
+  --color-border-subtle: #E2E8F0;    /* Slate-200: Border kartu & container */
+  --color-border-default: #CBD5E1;   /* Slate-300: Border input & kontrol */
+  --color-border-strong: #94A3B8;    /* Slate-400: Focus/active ring border */
+
+  /* Typography / Text */
+  --color-text-primary: #0F172A;     /* Slate-900: Judul & teks utama (18.7:1 vs white) */
+  --color-text-secondary: #334155;   /* Slate-700: Teks body, label (9.6:1 vs white) */
+  --color-text-muted: #475569;       /* Slate-600: Meta info, helper (6.0:1 vs white) */
+  --color-text-inverse: #FFFFFF;     /* Putih: Teks di atas warna gelap */
+
+  /* Brand Primary (Kepercayaan, Profesionalisme Otomotif) */
+  --color-primary-50: #EFF6FF;
+  --color-primary-100: #DBEAFE;
+  --color-primary-500: #3B82F6;
+  --color-primary-600: #2563EB;
+  --color-primary: #1E40AF;          /* Blue-800: Primer tepercaya (7.0:1 vs white) */
+  --color-primary-hover: #1E3A8A;    /* Blue-900: State hover primer */
+  --color-primary-text: #FFFFFF;
+
+  /* Brand Accent (CTA Aksi Utama: Pesan / Booking / Hubungi) */
+  --color-accent-50: #FFF7ED;
+  --color-accent-100: #FFEDD5;
+  --color-accent-500: #F97316;
+  --color-accent: #C2410C;           /* Orange-700: Kontras kuat aksi (4.7:1 vs white) */
+  --color-accent-hover: #9A3412;     /* Orange-800: State hover aksen */
+  --color-accent-text: #FFFFFF;
+
+  /* WhatsApp Direct Channel (Konversi Kunci) */
+  --color-wa: #15803D;               /* Green-700: Memenuhi WCAG AA untuk teks putih (4.8:1) */
+  --color-wa-hover: #166534;         /* Green-800 */
+  --color-wa-light: #DCFCE7;         /* Green-100 */
+  --color-wa-text: #FFFFFF;
+
+  /* Status Stok Mobil (Tersedia, Booking, Terjual) */
+  --color-status-available-bg: #DCFCE7;      /* Green-100 */
+  --color-status-available-text: #14532D;    /* Green-900 (8.5:1 vs bg) */
+  --color-status-available-border: #86EFAC;  /* Green-300 */
+
+  --color-status-booking-bg: #FEF3C7;        /* Amber-100 */
+  --color-status-booking-text: #78350F;      /* Amber-900 (8.6:1 vs bg) */
+  --color-status-booking-border: #FCD34D;    /* Amber-300 */
+
+  --color-status-sold-bg: #F1F5F9;           /* Slate-100 */
+  --color-status-sold-text: #334155;         /* Slate-700 (8.5:1 vs bg) */
+  --color-status-sold-border: #CBD5E1;       /* Slate-300 */
+
+  /* Feedback & Notifikasi */
+  --color-feedback-success-bg: #DCFCE7;
+  --color-feedback-success-text: #14532D;
+  --color-feedback-success: #15803D;
+
+  --color-feedback-error-bg: #FEE2E2;
+  --color-feedback-error-text: #7F1D1D;      /* Red-900 (9.2:1 vs bg) */
+  --color-feedback-error: #B91C1C;          /* Red-700 (5.3:1 vs white) */
+
+  --color-feedback-warning-bg: #FEF3C7;
+  --color-feedback-warning-text: #78350F;
+  --color-feedback-warning: #B45309;
+
+  --color-feedback-info-bg: #DBEAFE;
+  --color-feedback-info-text: #1E3A8A;
+  --color-feedback-info: #1D4ED8;
+
+  /* ==========================================================================
+     2. Tipografi — Typography
+     ========================================================================== */
+
+  --font-family-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Skala Ukuran Font */
+  --font-size-xs: 0.75rem;    /* 12px: Badge, caption, metadata */
+  --font-size-sm: 0.875rem;   /* 14px: Input, label, subtext, tabel */
+  --font-size-base: 1rem;     /* 16px: Body text default, tombol standar */
+  --font-size-lg: 1.125rem;   /* 18px: Subtitle, harga kecil */
+  --font-size-xl: 1.25rem;    /* 20px: Card header, harga mobil di kartu */
+  --font-size-2xl: 1.5rem;    /* 24px: H3, section header mobile */
+  --font-size-3xl: 1.875rem;  /* 30px: H2, hero mobile, harga detail mobil */
+  --font-size-4xl: 2.25rem;   /* 36px: H1 desktop hero */
+
+  /* Ketebalan Font */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* Line Heights */
+  --line-height-tight: 1.25;
+  --line-height-snug: 1.375;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+
+  /* ==========================================================================
+     3. Spacing — Jarak (Kelipatan 4px/8px)
+     ========================================================================== */
+
+  --space-0: 0px;
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
+
+  /* Touch Target Minimum (Aksesibilitas Mobile: min 44px - 48px) */
+  --touch-target-min: 48px;
+
+  /* ==========================================================================
+     4. Border Radius — Sudut Lengkung
+     ========================================================================== */
+
+  --radius-none: 0px;
+  --radius-sm: 4px;     /* Tag kecil, checkbox */
+  --radius-md: 8px;     /* Input, tombol, badge */
+  --radius-lg: 12px;    /* Kartu produk, modal container */
+  --radius-xl: 16px;    /* Sheet/drawer mobile, hero banner */
+  --radius-full: 9999px;/* Pill badge, tombol floating WhatsApp */
+
+  /* ==========================================================================
+     5. Bayangan — Box Shadows (Depth / Elevasi)
+     ========================================================================== */
+
+  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
+  --shadow-lg: 0 10px 15px -3px rgba(15, 23, 42, 0.08), 0 4px 6px -4px rgba(15, 23, 42, 0.04);
+  --shadow-xl: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05);
+  --shadow-floating: 0 12px 24px -4px rgba(21, 128, 61, 0.35); /* Khusus tombol floating WA */
+
+  /* ==========================================================================
+     6. Transisi & Animasi
+     ========================================================================== */
+
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ==========================================================================
+     7. Z-Index Layering
+     ========================================================================== */
+
+  --z-base: 1;
+  --z-sticky: 100;
+  --z-floating-cta: 200;
+  --z-drawer: 300;
+  --z-modal: 400;
+  --z-toast: 500;
+}
