@@ -24,6 +24,8 @@ import {
   publicTestimonialsRouter,
 } from "./routes/content";
 import { adminLeadsRouter, leadsRouter } from "./routes/leads";
+import { seoRouter } from "./routes/seo";
+import { serveDistFile, serveSpa } from "./routes/site";
 import { defaultStorage } from "./services/storage";
 
 export const app = new Hono();
@@ -115,6 +117,26 @@ app.get("/uploads/*", async (c) => {
   c.header("Cache-Control", "public, max-age=31536000, immutable");
   c.header("Content-Type", file.type || "image/webp");
   return c.body(file.stream());
+});
+
+// SEO: robots.txt dan sitemap.xml dinamis
+app.route("/", seoRouter);
+
+// SPA + meta tag per halaman. Aset build disajikan dengan cache immutable,
+// rute lain memakai index.html yang sudah disisipi meta.
+app.get("*", async (c) => {
+  const path = c.req.path;
+
+  if (path.startsWith("/api/")) return notFoundHandler(c);
+
+  const asset = await serveDistFile(c);
+  if (asset) return asset;
+
+  // Permintaan file statis yang tidak ada jangan dibalas dengan HTML.
+  if (/\.[a-z0-9]+$/i.test(path)) return notFoundHandler(c);
+
+  const page = await serveSpa(c);
+  return page ?? notFoundHandler(c);
 });
 
 // Error and 404 Handlers

@@ -23,6 +23,10 @@ export const envSchema = z.object({
     .string()
     .default("postgres://postgres:password@localhost:5432/website_mobil_bekas"),
   SHOWROOM_NAME: z.string().default("Bintang Mobil"),
+  // Origin publik untuk canonical URL, Open Graph, dan sitemap.
+  SITE_URL: z.string().default("http://localhost:3000"),
+  // Folder hasil build frontend yang disajikan API (dipakai untuk meta tag).
+  WEB_DIST_DIR: z.string().default(resolve(import.meta.dir, "../../web/dist")),
 });
 
 export const env = envSchema.parse(process.env);
