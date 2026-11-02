@@ -1,14 +1,29 @@
-import { Hono } from "hono";
 import { db } from "db";
 import { sql } from "drizzle-orm";
+import { Hono } from "hono";
+import { cors } from "hono/cors";
+import { secureHeaders } from "hono/secure-headers";
+import { env } from "./env";
+import { errorHandler, notFoundHandler } from "./middlewares/error-handler";
+import { healthRouter } from "./routes/health";
 
 export const app = new Hono();
 
-app.get("/api/health", (c) => {
-  return c.json({ status: "ok", timestamp: new Date().toISOString() });
-});
+// Security middlewares
+app.use("*", secureHeaders());
+app.use(
+  "*",
+  cors({
+    origin: "*",
+    allowMethods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowHeaders: ["Content-Type", "Authorization"],
+  }),
+);
 
-app.get("/api/db-check", async (c) => {
+// Routes
+const api = new Hono();
+api.route("/health", healthRouter);
+api.get("/db-check", async (c) => {
   try {
     const result = await db.execute(sql`SELECT 1 as connected`);
     return c.json({
@@ -28,9 +43,13 @@ app.get("/api/db-check", async (c) => {
   }
 });
 
-const port = Number(process.env.PORT) || 3001;
+app.route("/api", api);
+
+// Error and 404 Handlers
+app.notFound(notFoundHandler);
+app.onError(errorHandler);
 
 export default {
-  port,
+  port: env.PORT,
   fetch: app.fetch,
 };
