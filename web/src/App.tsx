@@ -1,19 +1,31 @@
-import { useEffect, useState } from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { Layout } from "./components/layout/Layout";
+import { CarDetailPage } from "./pages/CarDetailPage";
+import { CatalogPage } from "./pages/CatalogPage";
+import { HomePage } from "./pages/HomePage";
+import {
+  ContactPage,
+  CreditPage,
+  TestimonialsPage,
+  TradeInPage,
+} from "./pages/OtherPages";
+import { PageNotFound } from "./pages/PageNotFound";
 
 export function App() {
-  const [apiStatus, setApiStatus] = useState<string>("menghubungi API...");
-
-  useEffect(() => {
-    fetch("/api/health")
-      .then((res) => res.json())
-      .then((data) => setApiStatus(`API Status: ${data.status}`))
-      .catch(() => setApiStatus("API belum terhubung"));
-  }, []);
-
   return (
-    <div style={{ padding: "2rem", fontFamily: "sans-serif" }}>
-      <h1>Website Jual Mobil Bekas</h1>
-      <p>{apiStatus}</p>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route index element={<HomePage />} />
+          <Route path="katalog" element={<CatalogPage />} />
+          <Route path="katalog/:slug" element={<CarDetailPage />} />
+          <Route path="simulasi-kredit" element={<CreditPage />} />
+          <Route path="tukar-tambah" element={<TradeInPage />} />
+          <Route path="testimoni" element={<TestimonialsPage />} />
+          <Route path="kontak" element={<ContactPage />} />
+          <Route path="*" element={<PageNotFound />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
