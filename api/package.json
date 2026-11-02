@@ -11,6 +11,8 @@
     "test": "bun test"
   },
   "dependencies": {
+    "db": "workspace:*",
+    "drizzle-orm": "^0.45.4",
     "hono": "^4.7.0"
   },
   "devDependencies": {
