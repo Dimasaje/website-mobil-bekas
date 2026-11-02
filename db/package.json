@@ -8,6 +8,7 @@
   "scripts": {
     "generate": "drizzle-kit generate",
     "migrate": "bun run src/migrate.ts",
+    "seed": "bun run src/seed.ts",
     "push": "drizzle-kit push",
     "studio": "drizzle-kit studio",
     "lint": "bun fmt --check",

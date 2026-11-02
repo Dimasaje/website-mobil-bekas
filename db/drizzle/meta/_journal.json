@@ -8,6 +8,13 @@
       "when": 1793598063913,
       "tag": "0000_lonely_vanisher",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1793598730387,
+      "tag": "0001_spicy_glorian",
+      "breakpoints": true
     }
   ]
 }

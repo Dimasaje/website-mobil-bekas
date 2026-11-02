@@ -6,5 +6,6 @@ import * as schema from "./schema";
 export const client = new SQL(DATABASE_URL);
 export const db = drizzle({ client, schema });
 
+export { schema };
 export * from "./schema";
 export { DATABASE_URL };
