@@ -4,7 +4,6 @@ import { renderToString } from "react-dom/server";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { AdminLayout } from "../src/components/admin/AdminLayout";
 import { AdminLoginPage } from "../src/pages/admin/AdminLoginPage";
-import { AdminSectionPlaceholder } from "../src/pages/admin/AdminSectionPlaceholder";
 
 describe("Admin shell (T-28)", () => {
   it("renders login form with required fields", () => {
@@ -56,17 +55,5 @@ describe("Admin shell (T-28)", () => {
     );
 
     expect(html).toContain("Memeriksa sesi admin...");
-  });
-
-  it("renders section placeholder for upcoming admin modules", () => {
-    const html = renderToString(
-      React.createElement(AdminSectionPlaceholder, {
-        title: "Kelola Stok Mobil",
-        description: "Daftar unit dan status stok.",
-      }),
-    );
-
-    expect(html).toContain("Kelola Stok Mobil");
-    expect(html).toContain("Modul ini sedang disiapkan");
   });
 });

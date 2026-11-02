@@ -14,9 +14,9 @@ import { TradeInPage } from "./pages/TradeInPage";
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage";
 import { AdminCarFormPage } from "./pages/admin/AdminCarFormPage";
 import { AdminCarsPage } from "./pages/admin/AdminCarsPage";
+import { AdminContentPage } from "./pages/admin/AdminContentPage";
 import { AdminLeadsPage } from "./pages/admin/AdminLeadsPage";
 import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
-import { AdminSectionPlaceholder } from "./pages/admin/AdminSectionPlaceholder";
 
 export function App() {
   return (
@@ -41,17 +41,9 @@ export function App() {
           <Route index element={<AdminDashboardPage />} />
           <Route path="mobil" element={<AdminCarsPage />} />
           <Route path="mobil/baru" element={<AdminCarFormPage />} />
-          <Route path="mobil/:id" element={<AdminCarFormPage />} />{" "}
+          <Route path="mobil/:id" element={<AdminCarFormPage />} />
           <Route path="leads" element={<AdminLeadsPage />} />
-          <Route
-            path="konten"
-            element={
-              <AdminSectionPlaceholder
-                title="Konten & Pengaturan"
-                description="Artikel, promo, testimoni, dan pengaturan situs."
-              />
-            }
-          />
+          <Route path="konten" element={<AdminContentPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

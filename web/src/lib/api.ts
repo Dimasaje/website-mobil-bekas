@@ -202,6 +202,59 @@ export interface AdminCarInput {
 export type LeadType = "tukar_tambah" | "test_drive" | "kontak" | "simulasi";
 export type LeadStatus = "baru" | "dihubungi" | "selesai";
 
+export type ArticleStatus = "draft" | "terbit";
+
+export interface AdminPromo {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  bannerUrl: string | null;
+  startDate: string | null;
+  endDate: string | null;
+  isActive: boolean;
+  createdAt: string;
+}
+
+export interface AdminTestimonial {
+  id: string;
+  customerName: string;
+  location: string | null;
+  carName: string | null;
+  photoUrl: string | null;
+  quote: string;
+  rating: number;
+  isDisplayed: boolean;
+  createdAt: string;
+}
+
+export interface AdminArticle {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  coverImageUrl: string | null;
+  status: ArticleStatus;
+  publishedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AdminSiteSettings {
+  id: string;
+  showroomName: string;
+  whatsappNumber: string;
+  phoneNumber: string | null;
+  address: string;
+  mapsUrl: string | null;
+  openingHours: string | null;
+  heroTitle: string | null;
+  heroSubtitle: string | null;
+  defaultInterestRate: string;
+  minDownPaymentPercent: string;
+  updatedAt: string;
+}
+
 export interface AdminLead {
   id: string;
   carId: string | null;
@@ -441,4 +494,63 @@ export const apiClient = {
     id: string,
     data: { status?: LeadStatus; notes?: string | null },
   ) => api.patch<ApiResponse<AdminLead>>(`/api/admin/leads/${id}`, data),
+
+  // Admin content — promos
+  listAdminPromos: () =>
+    api.get<ApiResponse<AdminPromo[]>>("/api/admin/promos"),
+
+  createAdminPromo: (data: Partial<AdminPromo>) =>
+    api.post<ApiResponse<AdminPromo>>("/api/admin/promos", data),
+
+  updateAdminPromo: (id: string, data: Partial<AdminPromo>) =>
+    api.patch<ApiResponse<AdminPromo>>(`/api/admin/promos/${id}`, data),
+
+  deleteAdminPromo: (id: string) =>
+    api.delete<ApiResponse<null>>(`/api/admin/promos/${id}`),
+
+  // Admin content — testimonials
+  listAdminTestimonials: () =>
+    api.get<ApiResponse<AdminTestimonial[]>>("/api/admin/testimonials"),
+
+  createAdminTestimonial: (data: Partial<AdminTestimonial>) =>
+    api.post<ApiResponse<AdminTestimonial>>("/api/admin/testimonials", data),
+
+  updateAdminTestimonial: (id: string, data: Partial<AdminTestimonial>) =>
+    api.patch<ApiResponse<AdminTestimonial>>(
+      `/api/admin/testimonials/${id}`,
+      data,
+    ),
+
+  deleteAdminTestimonial: (id: string) =>
+    api.delete<ApiResponse<null>>(`/api/admin/testimonials/${id}`),
+
+  // Admin content — articles
+  listAdminArticles: (params?: { page?: number; limit?: number }) => {
+    const searchParams = new URLSearchParams();
+    if (params?.page) searchParams.append("page", String(params.page));
+    if (params?.limit) searchParams.append("limit", String(params.limit));
+    const query = searchParams.toString();
+    return api.get<ApiResponse<AdminArticle[]>>(
+      `/api/admin/articles${query ? `?${query}` : ""}`,
+    );
+  },
+
+  getAdminArticle: (id: string) =>
+    api.get<ApiResponse<AdminArticle>>(`/api/admin/articles/${id}`),
+
+  createAdminArticle: (data: Partial<AdminArticle>) =>
+    api.post<ApiResponse<AdminArticle>>("/api/admin/articles", data),
+
+  updateAdminArticle: (id: string, data: Partial<AdminArticle>) =>
+    api.patch<ApiResponse<AdminArticle>>(`/api/admin/articles/${id}`, data),
+
+  deleteAdminArticle: (id: string) =>
+    api.delete<ApiResponse<null>>(`/api/admin/articles/${id}`),
+
+  // Admin content — site settings
+  getAdminSettings: () =>
+    api.get<ApiResponse<AdminSiteSettings>>("/api/admin/settings"),
+
+  updateAdminSettings: (data: Partial<AdminSiteSettings>) =>
+    api.patch<ApiResponse<AdminSiteSettings>>("/api/admin/settings", data),
 };
