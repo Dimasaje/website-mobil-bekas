@@ -6,7 +6,8 @@
 #
 # Seperti backup.sh, setiap langkah dicek: gunzip ditulis ke berkas sementara,
 # diverifikasi, baru diumpankan ke psql. Kegagalan gunzip/psql membuat script
-# keluar non-zero.
+# keluar non-zero. Tidak ada pipeline di sini, jadi `pipefail` tidak diperlukan
+# dan script tetap POSIX sh.
 set -eu
 
 cd "$(dirname "$0")/.."
@@ -46,7 +47,7 @@ if [ ! -s "$TMP_SQL" ]; then
   echo "GAGAL: dump database kosong." >&2
   exit 1
 fi
-if ! tail -n 5 "$TMP_SQL" | grep -q "PostgreSQL database dump complete"; then
+if ! grep -q "PostgreSQL database dump complete" "$TMP_SQL"; then
   echo "GAGAL: dump database tidak lengkap (tidak ada penanda selesai)." >&2
   exit 1
 fi

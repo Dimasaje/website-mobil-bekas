@@ -5,7 +5,11 @@
 # Setiap langkah dicek statusnya: dump/tar ditulis ke berkas sementara, baru
 # dipindahkan menjadi arsip final setelah sukses. Kegagalan apa pun membuat
 # script keluar non-zero dan tidak meninggalkan arsip kosong yang tampak valid.
-# (Tidak memakai pipefail karena script berjalan di /bin/sh.)
+#
+# Script ini sengaja tidak memakai pipeline sama sekali (semua langkah menulis
+# atau membaca berkas langsung), jadi `pipefail` tidak diperlukan meski script
+# tetap POSIX sh dan bisa jalan di shell mana pun. Kalau nanti menambah
+# pipeline, ganti shebang ke bash dan pakai `set -euo pipefail`.
 set -eu
 
 cd "$(dirname "$0")/.."
@@ -41,7 +45,7 @@ if [ ! -s "$TMP_DB" ]; then
   echo "GAGAL: dump database kosong. Backup dibatalkan." >&2
   exit 1
 fi
-if ! tail -n 5 "$TMP_DB" | grep -q "PostgreSQL database dump complete"; then
+if ! grep -q "PostgreSQL database dump complete" "$TMP_DB"; then
   echo "GAGAL: dump database tidak lengkap (tidak ada penanda selesai). Backup dibatalkan." >&2
   exit 1
 fi
