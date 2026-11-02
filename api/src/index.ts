@@ -1,3 +1,4 @@
+import { join } from "node:path";
 import { db } from "db";
 import { sql } from "drizzle-orm";
 import { Hono } from "hono";
@@ -10,6 +11,8 @@ import { authRouter } from "./routes/auth";
 import { carsRouter } from "./routes/cars";
 import { healthRouter } from "./routes/health";
 import { adminLeadsRouter, leadsRouter } from "./routes/leads";
+import { adminPhotosRouter } from "./routes/photos";
+import { defaultStorage } from "./services/storage";
 
 export const app = new Hono();
 
@@ -56,6 +59,7 @@ api.get("/db-check", async (c) => {
 const adminApi = new Hono();
 adminApi.use("*", requireAdminAuth);
 adminApi.route("/auth", authRouter);
+adminApi.route("/cars", adminPhotosRouter);
 adminApi.route("/leads", adminLeadsRouter);
 adminApi.get("/dashboard", (c) => {
   const admin = c.get("admin");
@@ -70,6 +74,28 @@ adminApi.get("/dashboard", (c) => {
 
 api.route("/admin", adminApi);
 app.route("/api", api);
+
+// Static uploads serving with cache headers
+app.get("/uploads/*", async (c) => {
+  const relPath = c.req.path.replace(/^\/uploads\//, "");
+  const fullPath = join(defaultStorage.getBaseDir(), relPath);
+  const file = Bun.file(fullPath);
+  if (!(await file.exists())) {
+    return c.json(
+      {
+        success: false,
+        error: {
+          code: "NOT_FOUND",
+          message: "Berkas tidak ditemukan",
+        },
+      },
+      404,
+    );
+  }
+  c.header("Cache-Control", "public, max-age=31536000, immutable");
+  c.header("Content-Type", file.type || "image/webp");
+  return c.body(file.stream());
+});
 
 // Error and 404 Handlers
 app.notFound(notFoundHandler);
