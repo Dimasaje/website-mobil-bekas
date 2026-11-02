@@ -32,7 +32,8 @@ fi
 DB_USER=${POSTGRES_USER:-postgres}
 DB_NAME=${POSTGRES_DB:-website_mobil_bekas}
 TMP_SQL=$(mktemp)
-trap 'rm -f "$TMP_SQL"' EXIT
+TMP_TAIL=$(mktemp)
+trap 'rm -f "$TMP_SQL" "$TMP_TAIL"' EXIT
 
 echo "Memeriksa arsip $FILE..."
 if ! gzip -t "$FILE" 2>/dev/null; then
@@ -47,7 +48,11 @@ if [ ! -s "$TMP_SQL" ]; then
   echo "GAGAL: dump database kosong." >&2
   exit 1
 fi
-if ! grep -q "PostgreSQL database dump complete" "$TMP_SQL"; then
+if ! tail -n 5 "$TMP_SQL" >"$TMP_TAIL"; then
+  echo "GAGAL: membaca ujung dump database." >&2
+  exit 1
+fi
+if ! grep -q "PostgreSQL database dump complete" "$TMP_TAIL"; then
   echo "GAGAL: dump database tidak lengkap (tidak ada penanda selesai)." >&2
   exit 1
 fi

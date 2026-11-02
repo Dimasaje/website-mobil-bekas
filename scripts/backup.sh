@@ -28,11 +28,12 @@ STAMP=$(date +%Y%m%d-%H%M%S)
 
 TMP_DB="$DIR/.db-$STAMP.sql.tmp"
 TMP_UPLOADS="$DIR/.uploads-$STAMP.tar.gz.tmp"
+TMP_TAIL="$DIR/.tail-$STAMP.tmp"
 
 mkdir -p "$DIR"
 
 cleanup() {
-  rm -f "$TMP_DB" "$TMP_UPLOADS"
+  rm -f "$TMP_DB" "$TMP_UPLOADS" "$TMP_TAIL"
 }
 trap cleanup EXIT
 
@@ -45,7 +46,11 @@ if [ ! -s "$TMP_DB" ]; then
   echo "GAGAL: dump database kosong. Backup dibatalkan." >&2
   exit 1
 fi
-if ! grep -q "PostgreSQL database dump complete" "$TMP_DB"; then
+if ! tail -n 5 "$TMP_DB" >"$TMP_TAIL"; then
+  echo "GAGAL: membaca ujung dump database. Backup dibatalkan." >&2
+  exit 1
+fi
+if ! grep -q "PostgreSQL database dump complete" "$TMP_TAIL"; then
   echo "GAGAL: dump database tidak lengkap (tidak ada penanda selesai). Backup dibatalkan." >&2
   exit 1
 fi
