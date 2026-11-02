@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { describe, expect, it } from "bun:test";
 import { App } from "../src/App";
 import { Badge } from "../src/components/common/Badge";
@@ -87,6 +88,17 @@ describe("Web Foundation Component Tests", () => {
         icon: "🚗",
       });
       expect(empty).toBeDefined();
+    });
+
+    it("verifies index.css wraps custom UI classes in @layer components for Tailwind precedence", async () => {
+      const filePath = fileURLToPath(
+        new URL("../src/index.css", import.meta.url),
+      );
+      const cssContent = await Bun.file(filePath).text();
+      expect(cssContent).toContain("@layer components");
+      const layerIndex = cssContent.indexOf("@layer components");
+      const btnIndex = cssContent.indexOf(".btn {");
+      expect(btnIndex).toBeGreaterThan(layerIndex);
     });
   });
 });
