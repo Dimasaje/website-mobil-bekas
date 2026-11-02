@@ -107,6 +107,7 @@ export interface CarPhoto {
 export interface Car {
   id: string;
   brandId: string;
+  brand?: { id: string; name: string; slug: string } | null;
   brandName?: string;
   title: string;
   slug: string;
