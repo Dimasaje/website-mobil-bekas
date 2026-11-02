@@ -36,9 +36,9 @@ export function Footer({
 
           {/* Kolom 2: Menu Cepat */}
           <div>
-            <h4 className="text-white font-semibold text-base mb-3">
+            <h2 className="text-white font-semibold text-base mb-3">
               Navigasi Utama
-            </h4>
+            </h2>
             <ul className="space-y-2 text-sm">
               <li>
                 <Link to="/" className="hover:text-white transition-colors">
@@ -98,9 +98,9 @@ export function Footer({
 
           {/* Kolom 3: Kontak & Jam Buka */}
           <div>
-            <h4 className="text-white font-semibold text-base mb-3">
+            <h2 className="text-white font-semibold text-base mb-3">
               Kontak Showroom
-            </h4>
+            </h2>
             <div className="space-y-2 text-sm text-slate-400">
               <p>📍 {address}</p>
               <p>🕒 {openingHours}</p>
@@ -120,7 +120,7 @@ export function Footer({
           </div>
         </div>
 
-        <div className="border-t border-slate-800 pt-6 text-center text-xs text-slate-500">
+        <div className="border-t border-slate-800 pt-6 text-center text-xs text-slate-400">
           © {currentYear} {showroomName}. Hak Cipta Dilindungi Undang-Undang.
         </div>
       </div>

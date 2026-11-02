@@ -4,6 +4,7 @@ import { EmptyState } from "../components/common/EmptyState";
 import { ErrorState } from "../components/common/ErrorState";
 import { useLayoutSettings } from "../components/layout/Layout";
 import { apiClient, type Car, type CarFilters } from "../lib/api";
+import { CARD_IMAGE_SIZES, imageSources } from "../lib/images";
 import { buildWhatsAppLink } from "../lib/whatsapp";
 
 // Helper pagination windowing
@@ -515,6 +516,7 @@ export function CatalogPage() {
             </label>
             <select
               id="sort-select"
+              aria-label="Urutkan daftar mobil"
               value={sort}
               onChange={(e) => updateParams({ sort: e.target.value })}
               className="form-select text-sm h-11 min-w-[170px]"
@@ -671,13 +673,15 @@ export function CatalogPage() {
                     <div className="h-48 bg-slate-100 relative overflow-hidden flex items-center justify-center">
                       {primaryPhoto ? (
                         <img
-                          src={primaryPhoto}
+                          {...imageSources(primaryPhoto)}
+                          sizes={CARD_IMAGE_SIZES}
                           alt={car.title}
                           className="w-full h-full object-cover"
                           loading="lazy"
+                          decoding="async"
                         />
                       ) : (
-                        <span className="text-slate-400 text-sm">
+                        <span className="text-slate-600 text-sm">
                           🚗 Foto belum tersedia
                         </span>
                       )}
@@ -695,7 +699,7 @@ export function CatalogPage() {
                           <Link to={`/katalog/${car.slug}`}>{car.title}</Link>
                         </h2>
 
-                        <div className="flex flex-wrap gap-1.5 text-xs text-slate-500 mb-3">
+                        <div className="flex flex-wrap gap-1.5 text-xs text-slate-600 mb-3">
                           <span className="bg-slate-100 px-2 py-0.5 rounded">
                             {car.year}
                           </span>

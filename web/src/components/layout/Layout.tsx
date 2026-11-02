@@ -45,7 +45,9 @@ export function Layout() {
         showroomName={settings?.showroomName}
         whatsappNumber={settings?.whatsappNumber}
       />
-      <main className="flex-1 pb-16 md:pb-6">
+      {/* min-h menjaga footer tetap di bawah lipatan saat konten halaman masih
+          dimuat, sehingga tidak ada layout shift besar (CLS). */}
+      <main className="flex-1 min-h-[80vh] pb-16 md:pb-6">
         <Outlet context={{ settings } satisfies LayoutContext} />
       </main>
       <Footer

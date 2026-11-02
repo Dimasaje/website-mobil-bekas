@@ -13,6 +13,7 @@ import {
   type SiteSettings,
   type Testimonial,
 } from "../lib/api";
+import { CARD_IMAGE_SIZES, imageSources } from "../lib/images";
 import { buildWhatsAppLink } from "../lib/whatsapp";
 
 export function buildQuickSearchQuery(params: {
@@ -406,13 +407,15 @@ export function HomePage() {
                     <div className="h-48 bg-slate-200 relative overflow-hidden flex items-center justify-center">
                       {primaryPhoto ? (
                         <img
-                          src={primaryPhoto}
+                          {...imageSources(primaryPhoto)}
+                          sizes={CARD_IMAGE_SIZES}
                           alt={car.title}
                           className="w-full h-full object-cover"
                           loading="lazy"
+                          decoding="async"
                         />
                       ) : (
-                        <span className="text-slate-400 text-sm">
+                        <span className="text-slate-600 text-sm">
                           🚗 Foto belum tersedia
                         </span>
                       )}
@@ -428,7 +431,7 @@ export function HomePage() {
                         <h3 className="font-bold text-base text-slate-900 line-clamp-1 mb-2">
                           {car.title}
                         </h3>
-                        <div className="flex flex-wrap gap-2 text-xs text-slate-500 mb-4">
+                        <div className="flex flex-wrap gap-2 text-xs text-slate-600 mb-4">
                           <span>{car.year}</span>
                           <span>•</span>
                           <span className="capitalize">{car.transmission}</span>
@@ -441,7 +444,7 @@ export function HomePage() {
                           Rp {Number(car.price).toLocaleString("id-ID")}
                         </div>
                         {car.dpAmount && (
-                          <div className="text-xs text-slate-500">
+                          <div className="text-xs text-slate-600">
                             DP mulai Rp{" "}
                             {Number(car.dpAmount).toLocaleString("id-ID")}
                           </div>
@@ -538,9 +541,9 @@ export function HomePage() {
                       {item.customerName.slice(0, 2).toUpperCase()}
                     </div>
                     <div>
-                      <h4 className="font-bold text-sm text-slate-900">
+                      <h3 className="font-bold text-sm text-slate-900">
                         {item.customerName}
-                      </h4>
+                      </h3>
                       {item.location && (
                         <p className="text-xs text-slate-500">
                           {item.location}

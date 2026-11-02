@@ -2,6 +2,7 @@ import { join } from "node:path";
 import { db } from "db";
 import { sql } from "drizzle-orm";
 import { Hono } from "hono";
+import { compress } from "hono/compress";
 import { cors } from "hono/cors";
 import { secureHeaders } from "hono/secure-headers";
 import { env } from "./env";
@@ -32,6 +33,8 @@ export const app = new Hono();
 
 // Security middlewares
 app.use("*", secureHeaders());
+// Kompresi respons teks (HTML, JS, CSS, JSON) agar aset build tidak dikirim mentah.
+app.use("*", compress());
 app.use(
   "*",
   cors({

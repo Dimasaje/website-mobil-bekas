@@ -3,6 +3,12 @@ import { Link, useParams } from "react-router-dom";
 import { LoadingSpinner } from "../components/common/LoadingSpinner";
 import { useLayoutSettings } from "../components/layout/Layout";
 import { apiClient, type Car } from "../lib/api";
+import {
+  CARD_IMAGE_SIZES,
+  DETAIL_IMAGE_SIZES,
+  imageSources,
+  imageVariant,
+} from "../lib/images";
 import { buildWhatsAppLink } from "../lib/whatsapp";
 
 export function CarDetailPage() {
@@ -235,9 +241,13 @@ export function CarDetailPage() {
             >
               {currentPhoto.url ? (
                 <img
-                  src={currentPhoto.url}
+                  {...imageSources(currentPhoto.url)}
+                  sizes={DETAIL_IMAGE_SIZES}
                   alt={`${car.title} foto ${activePhotoIndex + 1}`}
                   className="w-full h-full object-contain cursor-zoom-in"
+                  loading="eager"
+                  fetchPriority="high"
+                  decoding="async"
                   onClick={() => setIsZoomOpen(true)}
                 />
               ) : (
@@ -311,9 +321,11 @@ export function CarDetailPage() {
                     }`}
                   >
                     <img
-                      src={item.url}
+                      src={imageVariant(item.url, "thumb")}
                       alt={`Thumbnail ${idx + 1}`}
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </button>
                 ))}
@@ -591,13 +603,15 @@ export function CarDetailPage() {
                   <div className="h-44 bg-slate-100 relative overflow-hidden flex items-center justify-center">
                     {photo ? (
                       <img
-                        src={photo}
+                        {...imageSources(photo)}
+                        sizes={CARD_IMAGE_SIZES}
                         alt={simCar.title}
                         className="w-full h-full object-cover"
                         loading="lazy"
+                        decoding="async"
                       />
                     ) : (
-                      <span className="text-slate-400 text-sm">
+                      <span className="text-slate-600 text-sm">
                         🚗 Foto belum tersedia
                       </span>
                     )}
@@ -612,7 +626,7 @@ export function CarDetailPage() {
                           {simCar.title}
                         </Link>
                       </h3>
-                      <div className="text-xs text-slate-500 mb-2">
+                      <div className="text-xs text-slate-600 mb-2">
                         {simCar.year} • {simCar.transmission} •{" "}
                         {simCar.mileage.toLocaleString("id-ID")} km
                       </div>
@@ -686,7 +700,7 @@ export function CarDetailPage() {
             onClick={(e) => e.stopPropagation()}
           >
             <img
-              src={currentPhoto.url}
+              src={imageVariant(currentPhoto.url, "large")}
               alt={`${car.title} foto ${activePhotoIndex + 1}`}
               className="max-w-full max-h-[80vh] object-contain rounded-lg shadow-2xl"
             />
