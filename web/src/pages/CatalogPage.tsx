@@ -6,6 +6,32 @@ import { useLayoutSettings } from "../components/layout/Layout";
 import { apiClient, type Car, type CarFilters } from "../lib/api";
 import { buildWhatsAppLink } from "../lib/whatsapp";
 
+// Helper pagination windowing
+export function getVisiblePagination(current: number, total: number) {
+  if (total <= 5) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+  const pages: (number | "ellipsis")[] = [];
+
+  if (current <= 3) {
+    pages.push(1, 2, 3, 4, "ellipsis", total);
+  } else if (current >= total - 2) {
+    pages.push(1, "ellipsis", total - 3, total - 2, total - 1, total);
+  } else {
+    pages.push(
+      1,
+      "ellipsis",
+      current - 1,
+      current,
+      current + 1,
+      "ellipsis",
+      total,
+    );
+  }
+
+  return pages;
+}
+
 export function CatalogPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { settings: layoutSettings } = useLayoutSettings();
@@ -47,6 +73,18 @@ export function CatalogPage() {
   useEffect(() => {
     setSearchInput(search);
   }, [search]);
+
+  // Lock body scroll when mobile filter drawer is open
+  useEffect(() => {
+    if (isMobileFilterOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isMobileFilterOpen]);
 
   // Load filter metadata once
   useEffect(() => {
@@ -390,16 +428,6 @@ export function CatalogPage() {
           </label>
         </div>
       </div>
-
-      {isMobile && (
-        <button
-          type="button"
-          onClick={() => setIsMobileFilterOpen(false)}
-          className="btn btn-primary w-full text-sm font-bold mt-4"
-        >
-          Terapkan Filter ({activeFilterCount})
-        </button>
-      )}
     </div>
   );
 
@@ -510,23 +538,51 @@ export function CatalogPage() {
 
         {/* Mobile Filter Drawer / Modal */}
         {isMobileFilterOpen && (
-          <div className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-xs lg:hidden">
-            <div className="bg-white w-full max-w-sm h-full overflow-y-auto p-6 shadow-2xl flex flex-col justify-between">
-              <div>
-                <div className="flex items-center justify-between pb-4 border-b border-slate-200 mb-6">
-                  <h3 className="text-base font-bold text-slate-900">
-                    Filter Kendaraan
-                  </h3>
+          <div
+            className="fixed inset-0 z-[300] flex justify-end bg-black/60 backdrop-blur-xs lg:hidden"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Filter Kendaraan"
+          >
+            <div className="bg-white w-full max-w-sm h-full flex flex-col shadow-2xl">
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between p-5 border-b border-slate-200">
+                <h3 className="text-base font-bold text-slate-900">
+                  Filter Kendaraan
+                </h3>
+                <button
+                  type="button"
+                  onClick={() => setIsMobileFilterOpen(false)}
+                  className="p-2 text-slate-500 hover:text-slate-800 text-lg cursor-pointer"
+                  aria-label="Tutup filter"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Drawer Body */}
+              <div className="flex-1 overflow-y-auto p-5 pb-6">
+                {renderFilterControls(true)}
+              </div>
+
+              {/* Drawer Sticky Footer with safe bottom padding */}
+              <div className="p-4 pb-8 sm:pb-5 border-t border-slate-200 bg-white flex flex-col gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsMobileFilterOpen(false)}
+                  className="btn btn-primary w-full text-sm font-bold h-11"
+                >
+                  Terapkan Filter ({activeFilterCount})
+                </button>
+                {activeFilterCount > 0 && (
                   <button
                     type="button"
-                    onClick={() => setIsMobileFilterOpen(false)}
-                    className="p-2 text-slate-500 hover:text-slate-800 text-lg"
-                    aria-label="Tutup filter"
+                    onClick={handleResetFilters}
+                    className="btn btn-outline w-full text-xs font-semibold h-9"
                   >
-                    ✕
+                    Reset Semua Filter
                   </button>
-                </div>
-                {renderFilterControls(true)}
+                )}
               </div>
             </div>
           </div>
@@ -720,7 +776,7 @@ export function CatalogPage() {
           {/* Pagination Navigation */}
           {!loading && !error && pagination.totalPages > 1 && (
             <nav
-              className="flex justify-center items-center gap-2 mt-10"
+              className="flex flex-wrap justify-center items-center gap-1.5 sm:gap-2 mt-10 max-w-full px-2"
               aria-label="Navigasi Halaman Katalog"
             >
               <button
@@ -729,33 +785,44 @@ export function CatalogPage() {
                   updateParams({ page: Math.max(1, pagination.page - 1) })
                 }
                 disabled={pagination.page <= 1}
-                className="btn btn-outline btn-sm px-3 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="btn btn-outline btn-sm px-2.5 sm:px-3 text-xs sm:text-sm min-w-8 h-9 disabled:opacity-40 disabled:cursor-not-allowed"
                 aria-label="Halaman sebelumnya"
               >
                 ‹
               </button>
 
-              {Array.from(
-                { length: pagination.totalPages },
-                (_, i) => i + 1,
-              ).map((pageNum) => {
-                const isActive = pageNum === pagination.page;
-                return (
-                  <button
-                    key={pageNum}
-                    type="button"
-                    onClick={() => updateParams({ page: pageNum })}
-                    className={`btn btn-sm min-w-9 px-3 font-semibold ${
-                      isActive
-                        ? "btn-primary shadow-xs"
-                        : "btn-outline text-slate-700 hover:bg-slate-100"
-                    }`}
-                    aria-current={isActive ? "page" : undefined}
-                  >
-                    {pageNum}
-                  </button>
-                );
-              })}
+              {getVisiblePagination(pagination.page, pagination.totalPages).map(
+                (item, idx) => {
+                  if (item === "ellipsis") {
+                    return (
+                      <span
+                        key={`ellipsis-${idx}`}
+                        className="px-1 text-slate-400 text-xs sm:text-sm select-none"
+                      >
+                        …
+                      </span>
+                    );
+                  }
+
+                  const pageNum = item;
+                  const isActive = pageNum === pagination.page;
+                  return (
+                    <button
+                      key={pageNum}
+                      type="button"
+                      onClick={() => updateParams({ page: pageNum })}
+                      className={`btn btn-sm min-w-8 sm:min-w-9 h-9 px-2 sm:px-3 text-xs sm:text-sm font-semibold ${
+                        isActive
+                          ? "btn-primary shadow-xs"
+                          : "btn-outline text-slate-700 hover:bg-slate-100"
+                      }`}
+                      aria-current={isActive ? "page" : undefined}
+                    >
+                      {pageNum}
+                    </button>
+                  );
+                },
+              )}
 
               <button
                 type="button"
@@ -765,7 +832,7 @@ export function CatalogPage() {
                   })
                 }
                 disabled={pagination.page >= pagination.totalPages}
-                className="btn btn-outline btn-sm px-3 disabled:opacity-40 disabled:cursor-not-allowed"
+                className="btn btn-outline btn-sm px-2.5 sm:px-3 text-xs sm:text-sm min-w-8 h-9 disabled:opacity-40 disabled:cursor-not-allowed"
                 aria-label="Halaman berikutnya"
               >
                 ›

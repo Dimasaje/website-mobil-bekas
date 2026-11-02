@@ -2,11 +2,35 @@ import { describe, expect, it } from "bun:test";
 import React from "react";
 import { renderToString } from "react-dom/server";
 import { MemoryRouter } from "react-router-dom";
-import { CatalogPage } from "../src/pages/CatalogPage";
+import { CatalogPage, getVisiblePagination } from "../src/pages/CatalogPage";
 
 describe("CatalogPage Component (T-21)", () => {
   it("exports CatalogPage component as a function", () => {
     expect(typeof CatalogPage).toBe("function");
+  });
+
+  it("calculates windowed pagination properly without mobile horizontal overflow", () => {
+    // Total pages <= 5 returns all
+    expect(getVisiblePagination(1, 3)).toEqual([1, 2, 3]);
+    expect(getVisiblePagination(3, 5)).toEqual([1, 2, 3, 4, 5]);
+
+    // Total 9 pages, current near start
+    expect(getVisiblePagination(1, 9)).toEqual([1, 2, 3, 4, "ellipsis", 9]);
+    expect(getVisiblePagination(2, 9)).toEqual([1, 2, 3, 4, "ellipsis", 9]);
+
+    // Current near end
+    expect(getVisiblePagination(8, 9)).toEqual([1, "ellipsis", 6, 7, 8, 9]);
+
+    // Current in middle
+    expect(getVisiblePagination(5, 9)).toEqual([
+      1,
+      "ellipsis",
+      4,
+      5,
+      6,
+      "ellipsis",
+      9,
+    ]);
   });
 
   it("renders structure with expected elements and sections within router", () => {
