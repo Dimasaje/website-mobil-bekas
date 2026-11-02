@@ -3,10 +3,12 @@ import { Link } from "react-router-dom";
 import { EmptyState } from "../components/common/EmptyState";
 import { ErrorState } from "../components/common/ErrorState";
 import { LoadingSpinner } from "../components/common/LoadingSpinner";
+import { useLayoutSettings } from "../components/layout/Layout";
 import { apiClient, type Car, type SiteSettings } from "../lib/api";
 import { buildWhatsAppLink } from "../lib/whatsapp";
 
 export function HomePage() {
+  const { settings: layoutSettings } = useLayoutSettings();
   const [settings, setSettings] = useState<SiteSettings | null>(null);
   const [cars, setCars] = useState<Car[]>([]);
   const [loading, setLoading] = useState(true);
@@ -40,11 +42,13 @@ export function HomePage() {
     fetchData();
   }, []);
 
-  const heroTitle = settings?.heroTitle || "Temukan Mobil Bekas Impian Anda";
+  const activeSettings = settings || layoutSettings;
+  const heroTitle =
+    activeSettings?.heroTitle || "Temukan Mobil Bekas Impian Anda";
   const heroSubtitle =
-    settings?.heroSubtitle ||
+    activeSettings?.heroSubtitle ||
     "Pilihan terlengkap, kondisi prima terjamin, bebas banjir dan tabrak.";
-  const waNumber = settings?.whatsappNumber || "6281298765432";
+  const waNumber = activeSettings?.whatsappNumber || "6281298765432";
 
   return (
     <div>
@@ -64,7 +68,7 @@ export function HomePage() {
             <a
               href={buildWhatsAppLink({
                 phoneNumber: waNumber,
-                showroomName: settings?.showroomName,
+                showroomName: activeSettings?.showroomName,
                 context: "general",
               })}
               target="_blank"
@@ -179,7 +183,7 @@ export function HomePage() {
                       <a
                         href={buildWhatsAppLink({
                           phoneNumber: waNumber,
-                          showroomName: settings?.showroomName,
+                          showroomName: activeSettings?.showroomName,
                           context: "car",
                           params: { carTitle: car.title, price: car.price },
                         })}

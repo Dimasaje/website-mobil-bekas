@@ -1,9 +1,17 @@
 import { useEffect, useState } from "react";
-import { Outlet } from "react-router-dom";
+import { Outlet, useOutletContext } from "react-router-dom";
 import { apiClient, type SiteSettings } from "../../lib/api";
 import { FloatingCTA } from "../common/FloatingCTA";
 import { Footer } from "./Footer";
 import { Header } from "./Header";
+
+export interface LayoutContext {
+  settings: SiteSettings | null;
+}
+
+export function useLayoutSettings(): LayoutContext {
+  return useOutletContext<LayoutContext>() || { settings: null };
+}
 
 export function Layout() {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
@@ -33,7 +41,7 @@ export function Layout() {
         whatsappNumber={settings?.whatsappNumber}
       />
       <main className="flex-1 pb-16 md:pb-6">
-        <Outlet />
+        <Outlet context={{ settings } satisfies LayoutContext} />
       </main>
       <Footer
         showroomName={settings?.showroomName}

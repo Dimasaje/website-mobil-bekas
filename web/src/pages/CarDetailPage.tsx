@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { ErrorState } from "../components/common/ErrorState";
 import { LoadingSpinner } from "../components/common/LoadingSpinner";
+import { useLayoutSettings } from "../components/layout/Layout";
 import { apiClient, type Car } from "../lib/api";
 import { buildWhatsAppLink } from "../lib/whatsapp";
 
 export function CarDetailPage() {
   const { slug } = useParams<{ slug: string }>();
+  const { settings } = useLayoutSettings();
   const [car, setCar] = useState<Car | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -105,6 +107,8 @@ export function CarDetailPage() {
         <div className="flex gap-4">
           <a
             href={buildWhatsAppLink({
+              phoneNumber: settings?.whatsappNumber,
+              showroomName: settings?.showroomName,
               context: "car",
               params: { carTitle: car.title, price: car.price },
             })}

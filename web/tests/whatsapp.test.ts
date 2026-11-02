@@ -1,5 +1,6 @@
 import { describe, expect, it } from "bun:test";
 import { FloatingCTA } from "../src/components/common/FloatingCTA";
+import { Footer } from "../src/components/layout/Footer";
 import {
   buildWhatsAppLink,
   formatWhatsAppNumber,
@@ -133,6 +134,22 @@ describe("WhatsApp Utilities & Floating CTA (T-19)", () => {
       expect(waLink.props.href).toContain("https://wa.me/6281298765432");
       expect(waLink.props.target).toBe("_blank");
       expect(waLink.props.className).toContain("min-h-[48px]");
+    });
+
+    it("verifies dynamic phone number from settings is honored in car context", () => {
+      const url = buildWhatsAppLink({
+        phoneNumber: "628111222333",
+        showroomName: "Bintang Mobil",
+        context: "car",
+        params: { carTitle: "Avanza", price: 178000000 },
+      });
+      expect(url.startsWith("https://wa.me/628111222333?text=")).toBe(true);
+    });
+
+    it("verifies Footer has adequate mobile bottom padding to prevent CTA overlap", () => {
+      const footer = Footer({});
+      expect(footer.props.className).toContain("pb-32");
+      expect(footer.props.className).toContain("md:pb-8");
     });
   });
 });
