@@ -256,5 +256,71 @@ describe("Content & Site Settings API (/api/* & /api/admin/*)", () => {
       expect(body.data.heroTitle).toBe("Pusat Mobil Bekas Berkualitas Jakarta");
       expect(body.data.phoneNumber).toBe("021-99998888");
     });
+
+    it("rejects invalid payloads on admin content endpoints", async () => {
+      const promoRes = await app.request("/api/admin/promos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Cookie: adminCookie },
+        body: JSON.stringify({ title: "ab" }),
+      });
+      expect(promoRes.status).toBe(400);
+
+      const testimonialRes = await app.request("/api/admin/testimonials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Cookie: adminCookie },
+        body: JSON.stringify({ customerName: "A", quote: "ok", rating: 9 }),
+      });
+      expect(testimonialRes.status).toBe(400);
+
+      const articleRes = await app.request("/api/admin/articles", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Cookie: adminCookie },
+        body: JSON.stringify({
+          title: "Artikel Uji",
+          content: "Konten artikel yang cukup panjang.",
+          status: "tayang",
+        }),
+      });
+      expect(articleRes.status).toBe(400);
+
+      const settingsRes = await app.request("/api/admin/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", Cookie: adminCookie },
+        body: JSON.stringify({ showroomName: "x", whatsappNumber: "123" }),
+      });
+      expect(settingsRes.status).toBe(400);
+
+      const body = (await settingsRes.json()) as {
+        success: boolean;
+        error: { code: string };
+      };
+      expect(body.success).toBe(false);
+      expect(body.error.code).toBe("VALIDATION_ERROR");
+    });
+
+    it("rejects unauthenticated writes to admin content endpoints", async () => {
+      const requests = [
+        app.request("/api/admin/promos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: "Promo Tanpa Login" }),
+        }),
+        app.request("/api/admin/testimonials", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ customerName: "Test", quote: "Testimoni" }),
+        }),
+        app.request("/api/admin/articles", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title: "Artikel", content: "Konten panjang" }),
+        }),
+        app.request("/api/admin/settings", { method: "PATCH" }),
+      ];
+
+      for (const res of await Promise.all(requests)) {
+        expect(res.status).toBe(401);
+      }
+    });
   });
 });
