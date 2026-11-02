@@ -9,6 +9,7 @@ import { errorHandler, notFoundHandler } from "./middlewares/error-handler";
 import { authRouter } from "./routes/auth";
 import { carsRouter } from "./routes/cars";
 import { healthRouter } from "./routes/health";
+import { adminLeadsRouter, leadsRouter } from "./routes/leads";
 
 export const app = new Hono();
 
@@ -29,6 +30,7 @@ const api = new Hono();
 api.route("/health", healthRouter);
 api.route("/auth", authRouter);
 api.route("/cars", carsRouter);
+api.route("/leads", leadsRouter);
 
 api.get("/db-check", async (c) => {
   try {
@@ -54,6 +56,7 @@ api.get("/db-check", async (c) => {
 const adminApi = new Hono();
 adminApi.use("*", requireAdminAuth);
 adminApi.route("/auth", authRouter);
+adminApi.route("/leads", adminLeadsRouter);
 adminApi.get("/dashboard", (c) => {
   const admin = c.get("admin");
   return c.json({
