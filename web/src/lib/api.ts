@@ -169,6 +169,12 @@ export interface Article {
   publishedAt?: string | null;
 }
 
+export interface AdminUser {
+  id: string;
+  name: string;
+  email: string;
+}
+
 export interface SiteSettings {
   showroomName: string;
   whatsappNumber: string;
@@ -245,4 +251,15 @@ export const apiClient = {
         message?: string;
       }>
     >("/api/leads", data),
+
+  // Auth admin
+  loginAdmin: (email: string, password: string) =>
+    api.post<ApiResponse<{ user: AdminUser }>>("/api/auth/login", {
+      email,
+      password,
+    }),
+
+  logoutAdmin: () => api.post<ApiResponse<null>>("/api/auth/logout"),
+
+  getAdminMe: () => api.get<ApiResponse<{ user: AdminUser }>>("/api/auth/me"),
 };
