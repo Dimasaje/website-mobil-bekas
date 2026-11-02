@@ -236,4 +236,69 @@ describe("Admin Cars CRUD API (/api/admin/cars)", () => {
     const publicSlugRes = await app.request(`/api/cars/${carInDb.slug}`);
     expect(publicSlugRes.status).toBe(404);
   });
+
+  it("rejects create with invalid payload (invalid brand UUID, short title)", async () => {
+    const res = await app.request("/api/admin/cars", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: adminCookie,
+      },
+      body: JSON.stringify({
+        brandId: "bukan-uuid",
+        title: "a",
+        model: "",
+        year: 1800,
+        price: -1,
+        transmission: "otomatis",
+        mileage: -5,
+      }),
+    });
+
+    expect(res.status).toBe(400);
+    const body = (await res.json()) as {
+      success: boolean;
+      error: { code: string; details: unknown[] };
+    };
+    expect(body.success).toBe(false);
+    expect(body.error.code).toBe("VALIDATION_ERROR");
+    expect(body.error.details.length).toBeGreaterThan(0);
+  });
+
+  it("returns 404 when updating or deleting a non-existent car", async () => {
+    const missingId = crypto.randomUUID();
+
+    const patchRes = await app.request(`/api/admin/cars/${missingId}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: adminCookie,
+      },
+      body: JSON.stringify({ title: "Judul Baru Tidak Ada" }),
+    });
+    expect(patchRes.status).toBe(404);
+
+    const delRes = await app.request(`/api/admin/cars/${missingId}`, {
+      method: "DELETE",
+      headers: { Cookie: adminCookie },
+    });
+    expect(delRes.status).toBe(404);
+  });
+
+  it("rejects status and featured updates without a valid session", async () => {
+    const id = crypto.randomUUID();
+    const statusRes = await app.request(`/api/admin/cars/${id}/status`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: "terjual" }),
+    });
+    expect(statusRes.status).toBe(401);
+
+    const featuredRes = await app.request(`/api/admin/cars/${id}/featured`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ isFeatured: true }),
+    });
+    expect(featuredRes.status).toBe(401);
+  });
 });

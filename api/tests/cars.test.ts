@@ -178,4 +178,36 @@ describe("Public Cars API (/api/cars)", () => {
     );
     expect(notFoundRes.status).toBe(404);
   });
+
+  it("rejects invalid query parameters (status draft, limit too large, page 0)", async () => {
+    const draftStatusRes = await app.request("/api/cars?status=draft");
+    expect(draftStatusRes.status).toBe(400);
+
+    const bigLimitRes = await app.request("/api/cars?limit=999");
+    expect(bigLimitRes.status).toBe(400);
+
+    const zeroPageRes = await app.request("/api/cars?page=0");
+    expect(zeroPageRes.status).toBe(400);
+
+    const body = (await zeroPageRes.json()) as {
+      success: boolean;
+      error: { code: string };
+    };
+    expect(body.success).toBe(false);
+    expect(body.error.code).toBe("VALIDATION_ERROR");
+  });
+
+  it("returns an empty list for an unknown brand slug", async () => {
+    const res = await app.request("/api/cars?brand=merek-yang-tidak-ada");
+    expect(res.status).toBe(200);
+
+    const body = (await res.json()) as {
+      success: boolean;
+      data: unknown[];
+      pagination: { total: number };
+    };
+    expect(body.success).toBe(true);
+    expect(body.data.length).toBe(0);
+    expect(body.pagination.total).toBe(0);
+  });
 });
