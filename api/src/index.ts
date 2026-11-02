@@ -7,6 +7,7 @@ import { env } from "./env";
 import { requireAdminAuth } from "./middlewares/auth";
 import { errorHandler, notFoundHandler } from "./middlewares/error-handler";
 import { authRouter } from "./routes/auth";
+import { carsRouter } from "./routes/cars";
 import { healthRouter } from "./routes/health";
 
 export const app = new Hono();
@@ -27,6 +28,7 @@ app.use(
 const api = new Hono();
 api.route("/health", healthRouter);
 api.route("/auth", authRouter);
+api.route("/cars", carsRouter);
 
 api.get("/db-check", async (c) => {
   try {
