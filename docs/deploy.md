@@ -142,6 +142,8 @@ Hasil di `backups/`:
 
 Arsip lebih tua dari `BACKUP_KEEP_DAYS` (default 14) dihapus otomatis.
 
+Script berhenti dengan status non-zero bila `pg_dump` atau `tar` gagal, dan tidak meninggalkan arsip setengah jadi: dump dan tar ditulis ke berkas sementara, diperiksa (tidak kosong, gzip valid, ada penanda `PostgreSQL database dump complete`), baru dipindahkan menjadi `db-<stamp>.sql.gz` / `uploads-<stamp>.tar.gz`. Artinya `./scripts/backup.sh && echo ok` hanya mencetak `ok` kalau kedua arsip benar-benar terbentuk.
+
 Jadwalkan harian lewat cron VPS, mis. pukul 03:00:
 
 ```cron
@@ -160,9 +162,9 @@ Salin `backups/` ke luar VPS (object storage, `rsync` ke mesin lain) — backup 
 ./scripts/restore.sh backups/db-20260101-030000.sql.gz backups/uploads-20260101-030000.tar.gz
 ```
 
-Script meminta konfirmasi (ketik `restore`), menghentikan `app`, memulihkan data, lalu menyalakan `app` kembali. Restore menimpa data yang ada dan tidak bisa dibatalkan.
+Script memeriksa dulu bahwa arsip adalah gzip valid, tidak kosong, dan dump lengkap (`-- PostgreSQL database dump complete`); kalau tidak, script berhenti sebelum menyentuh database. Setelah konfirmasi (ketik `restore`), `app` dihentikan, data dipulihkan, lalu `app` dinyalakan kembali. Restore menimpa data yang ada dan tidak bisa dibatalkan. Bila `psql` gagal, script keluar non-zero dan `app` tetap berhenti — periksa pesan error, lalu `docker compose start app` untuk menyalakan lagi.
 
-Migrasi tidak dijalankan ulang saat restore karena entrypoint app dijalankan normal ketika `docker compose start app`; kalau backup berasal dari versi skema lama, jalankan `docker compose up -d app` untuk menerapkan migrasi yang belum ada.
+`docker compose start app` menjalankan ulang entrypoint, jadi `bun run db:migrate` ikut berjalan setelah restore. Kalau backup berasal dari versi skema lama, migrasi yang belum ada diterapkan otomatis saat itu.
 
 Memulihkan dari database kosong (mis. VPS baru):
 

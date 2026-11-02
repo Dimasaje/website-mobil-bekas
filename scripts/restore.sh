@@ -3,6 +3,10 @@
 #   ./scripts/restore.sh backups/db-20260101-030000.sql.gz
 #   ./scripts/restore.sh backups/db-20260101-030000.sql.gz backups/uploads-20260101-030000.tar.gz
 # PERINGATAN: menimpa data yang ada (dump memakai --clean --if-exists).
+#
+# Seperti backup.sh, setiap langkah dicek: gunzip ditulis ke berkas sementara,
+# diverifikasi, baru diumpankan ke psql. Kegagalan gunzip/psql membuat script
+# keluar non-zero.
 set -eu
 
 cd "$(dirname "$0")/.."
@@ -26,6 +30,31 @@ fi
 
 DB_USER=${POSTGRES_USER:-postgres}
 DB_NAME=${POSTGRES_DB:-website_mobil_bekas}
+TMP_SQL=$(mktemp)
+trap 'rm -f "$TMP_SQL"' EXIT
+
+echo "Memeriksa arsip $FILE..."
+if ! gzip -t "$FILE" 2>/dev/null; then
+  echo "GAGAL: $FILE bukan gzip yang valid." >&2
+  exit 1
+fi
+if ! gunzip -c "$FILE" >"$TMP_SQL"; then
+  echo "GAGAL: dekompresi $FILE." >&2
+  exit 1
+fi
+if [ ! -s "$TMP_SQL" ]; then
+  echo "GAGAL: dump database kosong." >&2
+  exit 1
+fi
+if ! tail -n 5 "$TMP_SQL" | grep -q "PostgreSQL database dump complete"; then
+  echo "GAGAL: dump database tidak lengkap (tidak ada penanda selesai)." >&2
+  exit 1
+fi
+
+if [ -n "$UPLOADS" ] && ! gzip -t "$UPLOADS" 2>/dev/null; then
+  echo "GAGAL: $UPLOADS bukan arsip gzip yang valid." >&2
+  exit 1
+fi
 
 echo "PERINGATAN: seluruh data di database '$DB_NAME' akan ditimpa oleh $FILE."
 printf "Ketik 'restore' untuk melanjutkan: "
@@ -39,7 +68,10 @@ echo "Menghentikan app agar tidak ada penulisan selama restore..."
 docker compose stop app
 
 echo "Restore database..."
-gunzip -c "$FILE" | docker compose exec -T db psql -v ON_ERROR_STOP=1 -U "$DB_USER" -d "$DB_NAME"
+if ! docker compose exec -T db psql -v ON_ERROR_STOP=1 -U "$DB_USER" -d "$DB_NAME" <"$TMP_SQL"; then
+  echo "GAGAL: restore database. App tetap berhenti; periksa log lalu jalankan 'docker compose start app'." >&2
+  exit 1
+fi
 
 if [ -n "$UPLOADS" ]; then
   # Container sekali pakai: entrypoint diganti sh supaya migrasi tidak ikut jalan,
@@ -49,7 +81,7 @@ if [ -n "$UPLOADS" ]; then
   docker compose run --rm -T --no-deps --entrypoint sh app -c 'tar xzf - -C /app' <"$UPLOADS"
 fi
 
-echo "Menyalakan app..."
+echo "Menyalakan app (entrypoint menjalankan migrasi, termasuk yang belum ada di backup)..."
 docker compose start app
 
 echo "Restore selesai."
