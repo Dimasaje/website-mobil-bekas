@@ -1,7 +1,11 @@
 import { beforeAll, describe, expect, it } from "bun:test";
-import { count, sql } from "drizzle-orm";
+import { count, eq, sql } from "drizzle-orm";
 import { db, schema } from "../src/index";
 import { runSeed } from "../src/seed";
+
+// Mobil contoh pertama dari seed; dipakai agar test relasi tidak bergantung
+// pada urutan/isi tabel cars di database yang sudah terpakai.
+const SEED_CAR_SLUG = "toyota-avanza-13-g-manual-2020";
 
 describe("Database Schema & Seed Verification", () => {
   beforeAll(async () => {
@@ -52,16 +56,27 @@ describe("Database Schema & Seed Verification", () => {
     expect(settings.showroomName).toBe("Bintang Mobil");
   });
 
-  it("verifies car relations with brand and photos", async () => {
-    const carList = await db.query.cars.findMany({
+  // Deterministik: memakai slug mobil seed yang pasti ada dan berfoto, bukan
+  // "mobil pertama" yang bergantung isi database pengembangan.
+  it("verifies seed car relations with brand and photos", async () => {
+    const car = await db.query.cars.findFirst({
+      where: eq(schema.cars.slug, SEED_CAR_SLUG),
       with: {
         brand: true,
         photos: true,
       },
-      limit: 1,
     });
-    expect(carList.length).toBe(1);
-    expect(carList[0].brand).toBeDefined();
-    expect(carList[0].photos.length).toBeGreaterThan(0);
+
+    expect(car).toBeDefined();
+    expect(car!.brand).toBeDefined();
+    expect(car!.photos.length).toBeGreaterThan(0);
+  });
+
+  it("verifies no car is left without a brand", async () => {
+    const orphans = await db.execute(
+      sql`SELECT c.slug FROM cars c LEFT JOIN brands b ON b.id = c.brand_id WHERE b.id IS NULL LIMIT 5`,
+    );
+
+    expect(orphans.length).toBe(0);
   });
 });
