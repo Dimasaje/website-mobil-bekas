@@ -4,12 +4,15 @@ export interface FloatingCTAProps {
   whatsappNumber?: string;
   phoneNumber?: string;
   showroomName?: string;
+  /** Extra classes for the wrapper, e.g. "hidden lg:flex" to hide on mobile. */
+  className?: string;
 }
 
 export function FloatingCTA({
   whatsappNumber = "6281298765432",
   phoneNumber = "021-87654321",
   showroomName = "Bintang Mobil",
+  className = "",
 }: FloatingCTAProps) {
   const waUrl = buildWhatsAppLink({
     phoneNumber: whatsappNumber,
@@ -22,7 +25,7 @@ export function FloatingCTA({
   return (
     <aside
       aria-label="Kontak Cepat Showroom"
-      className="fixed bottom-4 right-4 z-[200] flex flex-col gap-2 pointer-events-auto"
+      className={`fixed bottom-4 right-4 z-[200] flex flex-col gap-2 pointer-events-auto ${className}`}
     >
       {/* Telepon */}
       <a

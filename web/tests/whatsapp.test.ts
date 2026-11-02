@@ -120,6 +120,7 @@ describe("WhatsApp Utilities & Floating CTA (T-19)", () => {
       expect(cta.props.className).toContain("fixed");
       expect(cta.props.className).toContain("bottom-4");
       expect(cta.props.className).toContain("right-4");
+      expect(cta.props.className).not.toContain("max-lg:hidden");
 
       const children = cta.props.children;
       expect(children.length).toBe(2);
@@ -134,6 +135,12 @@ describe("WhatsApp Utilities & Floating CTA (T-19)", () => {
       expect(waLink.props.href).toContain("https://wa.me/6281298765432");
       expect(waLink.props.target).toBe("_blank");
       expect(waLink.props.className).toContain("min-h-[48px]");
+    });
+
+    it("accepts className override so detail page can hide it on mobile", () => {
+      const cta = FloatingCTA({ className: "max-lg:hidden" });
+      expect(cta.props.className).toContain("max-lg:hidden");
+      expect(cta.props.className).toContain("fixed");
     });
 
     it("verifies dynamic phone number from settings is honored in car context", () => {

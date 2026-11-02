@@ -78,6 +78,14 @@ export function CarDetailPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isZoomOpen, car, activePhotoIndex]);
 
+  // Lock body scroll while zoom modal is open
+  useEffect(() => {
+    document.body.style.overflow = isZoomOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isZoomOpen]);
+
   const showroomName = layoutSettings?.showroomName || "Bintang Mobil";
   const waNumber = layoutSettings?.whatsappNumber || "6281298765432";
 
@@ -631,7 +639,7 @@ export function CarDetailPage() {
       {/* 6. Modal Lightbox Foto (Perbesar Foto) */}
       {isZoomOpen && currentPhoto.url && (
         <div
-          className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 select-none"
+          className="fixed inset-0 z-[300] bg-black/90 backdrop-blur-sm flex items-center justify-center p-4 select-none"
           onClick={() => setIsZoomOpen(false)}
         >
           {/* Close Button */}

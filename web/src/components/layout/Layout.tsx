@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Outlet, useOutletContext } from "react-router-dom";
+import { Outlet, useLocation, useOutletContext } from "react-router-dom";
 import { apiClient, type SiteSettings } from "../../lib/api";
 import { FloatingCTA } from "../common/FloatingCTA";
 import { Footer } from "./Footer";
@@ -15,6 +15,10 @@ export function useLayoutSettings(): LayoutContext {
 
 export function Layout() {
   const [settings, setSettings] = useState<SiteSettings | null>(null);
+  const { pathname } = useLocation();
+
+  // Detail mobil punya sticky bar CTA sendiri di mobile, jadi FloatingCTA disembunyikan
+  const isCarDetail = /^\/katalog\/[^/]+$/.test(pathname);
 
   useEffect(() => {
     let isMounted = true;
@@ -54,6 +58,7 @@ export function Layout() {
         whatsappNumber={settings?.whatsappNumber}
         phoneNumber={settings?.phoneNumber || undefined}
         showroomName={settings?.showroomName}
+        className={isCarDetail ? "max-lg:hidden" : ""}
       />
     </div>
   );
