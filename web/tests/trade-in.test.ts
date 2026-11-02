@@ -163,4 +163,20 @@ describe("TradeInPage initial target guard (T-48)", () => {
     expect(html).toContain("Unit Dipilih: Civic Turbo RS");
     expect(html).not.toContain("Unit rujukan saat ini");
   });
+
+  it("shows the target as reference only when no unit is selected", () => {
+    const html = renderToString(
+      React.createElement(
+        MemoryRouter,
+        {
+          initialEntries: ["/tukar-tambah?target=Civic+Turbo+RS"],
+        },
+        React.createElement(TradeInPage),
+      ),
+    );
+
+    expect(html).not.toContain("Unit Dipilih:");
+    expect(html).toContain("-- Pilih Unit Mobil dari Katalog Showroom --");
+    expect(html).toContain("Unit rujukan saat ini");
+  });
 });

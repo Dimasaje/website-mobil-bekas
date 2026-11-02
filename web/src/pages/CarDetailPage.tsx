@@ -540,7 +540,7 @@ export function CarDetailPage() {
               </Link>
 
               <Link
-                to={`/tukar-tambah?target=${encodeURIComponent(car.title)}`}
+                to={`/tukar-tambah?target=${encodeURIComponent(car.title)}&carId=${car.id}`}
                 className="btn btn-outline w-full justify-center text-xs font-bold"
               >
                 Ajukan Tukar Tambah Mobil Lama

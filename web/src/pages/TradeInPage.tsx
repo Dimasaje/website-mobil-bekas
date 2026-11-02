@@ -635,7 +635,7 @@ export function TradeInPage() {
                   }`}
                 >
                   <option value="">
-                    {targetCarName
+                    {selectedCarId && targetCarName
                       ? `Unit Dipilih: ${targetCarName}`
                       : "-- Pilih Unit Mobil dari Katalog Showroom --"}
                   </option>
