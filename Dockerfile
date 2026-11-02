@@ -23,6 +23,8 @@ ENV NODE_ENV=production
 # Ganti dengan `bun install --production` di stage runtime bila ukuran image jadi masalah.
 COPY --from=build /app/package.json /app/bun.lock ./
 COPY --from=build /app/node_modules ./node_modules
+# Bun workspace: link package db/hono/sharp/zod ada di api/node_modules, bukan root.
+COPY --from=build /app/api/node_modules ./api/node_modules
 COPY --from=build /app/api/package.json ./api/package.json
 COPY --from=build /app/api/src ./api/src
 COPY --from=build /app/db ./db
