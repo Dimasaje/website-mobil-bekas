@@ -199,6 +199,30 @@ export interface AdminCarInput {
   isFeatured?: boolean;
 }
 
+export type LeadType = "tukar_tambah" | "test_drive" | "kontak" | "simulasi";
+export type LeadStatus = "baru" | "dihubungi" | "selesai";
+
+export interface AdminLead {
+  id: string;
+  carId: string | null;
+  type: LeadType;
+  status: LeadStatus;
+  name: string;
+  phone: string;
+  notes: string | null;
+  data: Record<string, unknown> | null;
+  createdAt: string;
+  updatedAt: string;
+  car?: {
+    id: string;
+    title: string;
+    slug: string;
+    price: number | string;
+    year?: number;
+    transmission?: string;
+  } | null;
+}
+
 export interface Promo {
   id: string;
   title: string;
@@ -391,4 +415,30 @@ export const apiClient = {
 
   deleteCarPhoto: (carId: string, photoId: string) =>
     api.delete<ApiResponse<null>>(`/api/admin/cars/${carId}/photos/${photoId}`),
+
+  // Admin leads
+  listAdminLeads: (params?: {
+    page?: number;
+    limit?: number;
+    type?: string;
+    status?: string;
+  }) => {
+    const searchParams = new URLSearchParams();
+    Object.entries(params ?? {}).forEach(([key, val]) => {
+      if (val !== undefined && val !== "")
+        searchParams.append(key, String(val));
+    });
+    const query = searchParams.toString();
+    return api.get<ApiResponse<AdminLead[]>>(
+      `/api/admin/leads${query ? `?${query}` : ""}`,
+    );
+  },
+
+  getAdminLead: (id: string) =>
+    api.get<ApiResponse<AdminLead>>(`/api/admin/leads/${id}`),
+
+  updateAdminLead: (
+    id: string,
+    data: { status?: LeadStatus; notes?: string | null },
+  ) => api.patch<ApiResponse<AdminLead>>(`/api/admin/leads/${id}`, data),
 };

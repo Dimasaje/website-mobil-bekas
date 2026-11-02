@@ -14,6 +14,7 @@ import { TradeInPage } from "./pages/TradeInPage";
 import { AdminDashboardPage } from "./pages/admin/AdminDashboardPage";
 import { AdminCarFormPage } from "./pages/admin/AdminCarFormPage";
 import { AdminCarsPage } from "./pages/admin/AdminCarsPage";
+import { AdminLeadsPage } from "./pages/admin/AdminLeadsPage";
 import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
 import { AdminSectionPlaceholder } from "./pages/admin/AdminSectionPlaceholder";
 
@@ -41,15 +42,7 @@ export function App() {
           <Route path="mobil" element={<AdminCarsPage />} />
           <Route path="mobil/baru" element={<AdminCarFormPage />} />
           <Route path="mobil/:id" element={<AdminCarFormPage />} />{" "}
-          <Route
-            path="leads"
-            element={
-              <AdminSectionPlaceholder
-                title="Leads & Prospek"
-                description="Tindak lanjuti pengajuan tukar tambah, test drive, dan kontak."
-              />
-            }
-          />
+          <Route path="leads" element={<AdminLeadsPage />} />
           <Route
             path="konten"
             element={
