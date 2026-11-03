@@ -116,7 +116,25 @@ docker compose up -d app
 
 Migrasi otomatis dijalankan oleh entrypoint sebelum API start, jadi tidak ada langkah manual. Bila migrasi gagal, container berhenti (`set -e`) dan situs menjadi 502 di proxy sampai masalahnya diperbaiki — backup dulu sebelum rilis yang mengubah skema (bagian 7).
 
-Rollback: `git checkout <commit-lama> && docker compose build app && docker compose up -d app`. Migrasi tidak mundur otomatis; kalau rilis baru sudah mengubah skema, restore backup.
+### Rollback
+
+Bug yang sering terjadi: `docker compose up -d app` **tidak** mengganti container ke image hasil build ulang. Compose hanya mencetak `Container ... Running` dan container tetap menjalankan image lama, padahal `docker image inspect` sudah menunjuk image baru — rollback tampak sukses oleh `PS`/`/api/health` tapi kode lama tidak aktif.
+
+```bash
+cd /opt/website-mobil-bekas
+git checkout <commit-lama>
+docker compose build app
+docker compose up -d --force-recreate app
+```
+
+Wajib diverifikasi, jangan percaya status `Up` saja — image container harus sama dengan image `latest` yang baru dibangun:
+
+```bash
+docker inspect --format '{{.Image}}' website-mobil-bekas-app-1
+docker image inspect --format '{{.Id}}' website-mobil-bekas-app:latest
+```
+
+Kalau keduanya berbeda, jalankan ulang `docker compose up -d --force-recreate app`. Migrasi tidak mundur otomatis; kalau rilis baru sudah mengubah skema, restore backup.
 
 ### Build selalu di dalam image
 
