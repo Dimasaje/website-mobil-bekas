@@ -1,6 +1,5 @@
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { AdminLayout } from "./components/admin/AdminLayout";
 import { Layout } from "./components/layout/Layout";
 import { LoadingSpinner } from "./components/common/LoadingSpinner";
 
@@ -86,6 +85,14 @@ function PageSuspense({ children }: { children: React.ReactNode }) {
     </Suspense>
   );
 }
+
+// Shell admin (guard sesi + sidebar) ikut lazy: pengunjung publik tidak perlu
+// mengunduh kode itu sama sekali (#58).
+const AdminShell = lazy(() =>
+  import("./components/admin/AdminLayout").then((m) => ({
+    default: m.AdminLayout,
+  })),
+);
 
 export function App() {
   return (
@@ -183,7 +190,14 @@ export function App() {
             </PageSuspense>
           }
         />
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route
+          path="/admin"
+          element={
+            <PageSuspense>
+              <AdminShell />
+            </PageSuspense>
+          }
+        >
           <Route
             index
             element={
