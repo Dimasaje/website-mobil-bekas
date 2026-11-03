@@ -3,6 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import {
   ApiClientError,
   apiClient,
+  carPhotoUrl,
   type AdminCar,
   type CarStatus,
 } from "../../lib/api";
@@ -329,9 +330,7 @@ export function AdminCarsPage() {
 
               {!loading &&
                 cars.map((car) => {
-                  const photo =
-                    car.photos?.find((p) => p.isPrimary)?.url ??
-                    car.photos?.[0]?.url;
+                  const photo = carPhotoUrl(car);
                   const busy = busyId === car.id;
 
                   return (

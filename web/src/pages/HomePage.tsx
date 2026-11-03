@@ -6,6 +6,7 @@ import { LoadingSpinner } from "../components/common/LoadingSpinner";
 import { useLayoutSettings } from "../components/layout/Layout";
 import {
   apiClient,
+  carPhotoUrl,
   type Article,
   type Car,
   type CarFilters,
@@ -383,9 +384,7 @@ export function HomePage() {
           {!loading && !error && featuredCars.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {featuredCars.map((car) => {
-                const primaryPhoto = car.photos?.find(
-                  (p) => p.isPrimary,
-                )?.photoUrl;
+                const primaryPhoto = carPhotoUrl(car);
                 const statusBadgeClass =
                   car.status === "tersedia"
                     ? "badge-available"

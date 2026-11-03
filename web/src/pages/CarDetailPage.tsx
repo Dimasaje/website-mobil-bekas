@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { LoadingSpinner } from "../components/common/LoadingSpinner";
 import { useLayoutSettings } from "../components/layout/Layout";
-import { apiClient, type Car } from "../lib/api";
+import { apiClient, carPhotoUrl, type Car } from "../lib/api";
 import {
   CARD_IMAGE_SIZES,
   DETAIL_IMAGE_SIZES,
@@ -135,7 +135,7 @@ export function CarDetailPage() {
     car.photos && car.photos.length > 0
       ? car.photos
           .map((p) => ({
-            url: p.url || p.photoUrl || "",
+            url: p.url || "",
             id: p.id,
           }))
           .filter((p) => Boolean(p.url))
@@ -590,10 +590,7 @@ export function CarDetailPage() {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {similarCars.map((simCar) => {
-              const photo =
-                simCar.primaryPhoto ||
-                simCar.photos?.find((p) => p.isPrimary)?.url ||
-                simCar.photos?.[0]?.url;
+              const photo = carPhotoUrl(simCar);
 
               return (
                 <article

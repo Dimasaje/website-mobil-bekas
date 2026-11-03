@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { EmptyState } from "../components/common/EmptyState";
 import { ErrorState } from "../components/common/ErrorState";
 import { useLayoutSettings } from "../components/layout/Layout";
-import { apiClient, type Car, type CarFilters } from "../lib/api";
+import { apiClient, carPhotoUrl, type Car, type CarFilters } from "../lib/api";
 import { CARD_IMAGE_SIZES, imageSources } from "../lib/images";
 import { buildWhatsAppLink } from "../lib/whatsapp";
 
@@ -641,12 +641,7 @@ export function CatalogPage() {
           {!loading && !error && cars.length > 0 && (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {cars.map((car) => {
-                const primaryPhoto =
-                  car.primaryPhoto ||
-                  car.photos?.find((p) => p.isPrimary)?.url ||
-                  car.photos?.find((p) => p.isPrimary)?.photoUrl ||
-                  car.photos?.[0]?.url ||
-                  car.photos?.[0]?.photoUrl;
+                const primaryPhoto = carPhotoUrl(car);
 
                 const statusBadgeClass =
                   car.status === "tersedia"

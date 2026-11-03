@@ -119,7 +119,6 @@ export const api = {
 export interface CarPhoto {
   id: string;
   url?: string;
-  photoUrl?: string;
   isPrimary: boolean;
   order?: number;
   orderIndex?: number;
@@ -147,6 +146,22 @@ export interface Car {
   isFeatured: boolean;
   primaryPhoto?: string | null;
   photos?: CarPhoto[];
+}
+
+// Satu sumber kebenaran untuk foto utama mobil: API mengirim `primaryPhoto` di
+// level mobil dan `url` di setiap foto. Jangan baca `photoUrl` — field itu tidak
+// pernah ada di respons (bug #57). Parameter struktural supaya `Car` dan
+// `AdminCar` dua-duanya bisa lewat tanpa cast.
+export function carPhotoUrl(car: {
+  primaryPhoto?: string | null;
+  photos?: Array<{ url?: string; isPrimary?: boolean }>;
+}): string | undefined {
+  return (
+    car.primaryPhoto ||
+    car.photos?.find((p) => p.isPrimary)?.url ||
+    car.photos?.[0]?.url ||
+    undefined
+  );
 }
 
 export interface CarFilters {
