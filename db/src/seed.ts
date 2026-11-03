@@ -1,11 +1,55 @@
 import { SQL } from "bun";
 import { eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/bun-sql";
+import { join } from "node:path";
 import { DATABASE_URL } from "./env";
 import * as schema from "./schema";
 
 const client = new SQL(DATABASE_URL);
 const db = drizzle({ client, schema });
+
+// Foto contoh disajikan dari /uploads (aset di db/seed-assets, disalin ke
+// volume uploads saat seed) — jangan pakai CDN eksternal agar performa dan
+// ketersediaan tidak bergantung host luar (#56).
+const SEED_ASSET_DIR = join(import.meta.dir, "..", "seed-assets");
+
+const seedPhotoNames = [
+  "car-1",
+  "car-2",
+  "car-3",
+  "car-4",
+  "car-5",
+  "car-6",
+  "car-7",
+  "car-8",
+  "car-9",
+  "car-10",
+  "car-11",
+];
+
+// Varian mengikuti konvensi #13 (<base>-thumb/medium/large.webp) supaya
+// web/src/lib/images.ts otomatis membangun srcSet dari URL ini.
+const SEED_VARIANTS = ["thumb", "medium", "large"];
+
+async function copySeedPhotosToUploads(): Promise<string[]> {
+  // Default: <repo>/uploads/seed. Jangan pakai process.cwd(): `bun --filter db seed`
+  // berjalan dengan cwd db/, bukan root repo.
+  const baseDir =
+    process.env.UPLOADS_DIR ||
+    join(import.meta.dir, "..", "..", "uploads", "seed");
+  const urls: string[] = [];
+  for (const base of seedPhotoNames) {
+    for (const variant of SEED_VARIANTS) {
+      const file = `${base}-${variant}.webp`;
+      await Bun.write(
+        join(baseDir, file),
+        Bun.file(join(SEED_ASSET_DIR, file)),
+      );
+    }
+    urls.push(`/uploads/seed/${base}-large.webp`);
+  }
+  return urls;
+}
 
 export async function runSeed() {
   console.log("🌱 Menjalankan seed data...");
@@ -75,6 +119,9 @@ export async function runSeed() {
   const brandMap = new Map(allBrands.map((b) => [b.slug, b.id]));
 
   // 4. Cars & Photos (+- 10 mobil contoh)
+  const photoUrls = await copySeedPhotosToUploads();
+  let photoIdx = 0;
+  const nextPhoto = () => photoUrls[photoIdx++ % photoUrls.length];
   const sampleCars = [
     {
       title: "Toyota Avanza 1.3 G Manual 2020",
@@ -103,12 +150,12 @@ export async function runSeed() {
       isFeatured: true,
       photos: [
         {
-          url: "https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=800&q=80",
+          url: nextPhoto(),
           isPrimary: true,
           order: 0,
         },
         {
-          url: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?auto=format&fit=crop&w=800&q=80",
+          url: nextPhoto(),
           isPrimary: false,
           order: 1,
         },
@@ -141,7 +188,7 @@ export async function runSeed() {
       isFeatured: true,
       photos: [
         {
-          url: "https://images.unsplash.com/photo-1590362891991-f776e747a588?auto=format&fit=crop&w=800&q=80",
+          url: nextPhoto(),
           isPrimary: true,
           order: 0,
         },
@@ -174,7 +221,7 @@ export async function runSeed() {
       isFeatured: true,
       photos: [
         {
-          url: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&w=800&q=80",
+          url: nextPhoto(),
           isPrimary: true,
           order: 0,
         },
@@ -206,7 +253,7 @@ export async function runSeed() {
       isFeatured: false,
       photos: [
         {
-          url: "https://images.unsplash.com/photo-1552519507-da3b142c6e3d?auto=format&fit=crop&w=800&q=80",
+          url: nextPhoto(),
           isPrimary: true,
           order: 0,
         },
@@ -238,7 +285,7 @@ export async function runSeed() {
       isFeatured: false,
       photos: [
         {
-          url: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=800&q=80",
+          url: nextPhoto(),
           isPrimary: true,
           order: 0,
         },
@@ -270,7 +317,7 @@ export async function runSeed() {
       isFeatured: false,
       photos: [
         {
-          url: "https://images.unsplash.com/photo-1542282088-72c9c27ed0cd?auto=format&fit=crop&w=800&q=80",
+          url: nextPhoto(),
           isPrimary: true,
           order: 0,
         },
@@ -302,7 +349,7 @@ export async function runSeed() {
       isFeatured: true,
       photos: [
         {
-          url: "https://images.unsplash.com/photo-1617814076367-b759c7d7e738?auto=format&fit=crop&w=800&q=80",
+          url: nextPhoto(),
           isPrimary: true,
           order: 0,
         },
@@ -334,7 +381,7 @@ export async function runSeed() {
       isFeatured: false,
       photos: [
         {
-          url: "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?auto=format&fit=crop&w=800&q=80",
+          url: nextPhoto(),
           isPrimary: true,
           order: 0,
         },
@@ -366,7 +413,7 @@ export async function runSeed() {
       isFeatured: false,
       photos: [
         {
-          url: "https://images.unsplash.com/photo-1541348263662-e0c8de4259ba?auto=format&fit=crop&w=800&q=80",
+          url: nextPhoto(),
           isPrimary: true,
           order: 0,
         },
@@ -399,7 +446,7 @@ export async function runSeed() {
       isFeatured: true,
       photos: [
         {
-          url: "https://images.unsplash.com/photo-1580273916550-e323be2ae537?auto=format&fit=crop&w=800&q=80",
+          url: nextPhoto(),
           isPrimary: true,
           order: 0,
         },

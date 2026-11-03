@@ -28,6 +28,7 @@ COPY --from=build /app/api/node_modules ./api/node_modules
 COPY --from=build /app/api/package.json ./api/package.json
 COPY --from=build /app/api/src ./api/src
 COPY --from=build /app/db ./db
+COPY --from=build /app/db/seed-assets ./db/seed-assets
 COPY --from=build /app/web/dist ./web/dist
 COPY scripts/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
