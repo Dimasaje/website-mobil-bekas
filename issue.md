@@ -428,3 +428,37 @@ Semua hasil desain disimpan di `docs/design/`. Tampilan harus **mobile-first**, 
 | Planning | 1 |
 | **Total** | **40** |
 
+---
+
+## 10. Hasil fase 1 (ditutup #40)
+
+Seluruh milestone M0–M6 selesai. 58 issue tertutup, termasuk 10 bug hasil pengujian (#41–#49, #51–#59). Commit terakhir `625c89e`.
+
+**Indikator berhasil bagian 1:**
+
+| Indikator | Status | Bukti |
+|---|---|---|
+| Mobil ditemukan maksimal 3 langkah dari beranda | Tercapai | Beranda → katalog → detail; diuji di #26, #39 |
+| Setiap halaman mobil punya CTA WhatsApp dengan pesan otomatis | Tercapai | #19, #22; diuji #26 |
+| Admin dapat menambah/mengubah stok tanpa developer | Tercapai | CRUD + upload foto multi-varian; diuji #33, #39 |
+| Halaman terasa cepat dan nyaman di HP | Tercapai sebagian | Lighthouse mobile: Beranda 84, Katalog 87, Detail 82 (target #35 ≥80 tercapai; ambang ketat 95/90-92/88-91 tidak). Responsif 360/768/1280 px tanpa scroll horizontal, axe 0 pelanggaran serius, `bun test` 165 pass |
+
+**Terblokir saat penutupan:** deploy produksi + HTTPS/Let's Encrypt + smoke pasca-rilis. Domain `kumisiqbal.my.id` belum terhubung ke layanan apa pun (tanpa VPS/hosting); `SITE_URL`/`SITE_DOMAIN` masih placeholder.
+
+---
+
+## 11. Backlog fase 2 (belum dibuat sebagai issue)
+
+Urut dari yang paling berdampak:
+
+1. **Hosting/VPS + domain + HTTPS** — hubungkan `kumisiqbal.my.id`, isi `SITE_URL`/`SITE_DOMAIN`, jalankan `docs/deploy.md` di server publik, uji Let's Encrypt, lalu smoke pasca-rilis (sisa checklist #39/#37).
+2. **Performa lanjutan (SSR/SSG atau pra-render statis)** — TBT masih 414–648 ms (target <500); entry bundle 95,6% React/react-router sehingga optimasi klien sudah habis. Ini satu-satunya jalur nyata untuk menembus ambang 95/90-92/88-91.
+3. **Notifikasi lead** (WhatsApp/email) — lead saat ini hanya masuk database dan harus dicek manual di admin.
+4. **Perbaikan aksesibilitas moderat** — `landmark-*` di `/katalog`, `/admin/login`, `/admin/leads`; `heading-order` di detail artikel. Bukan penghambat rilis (0 pelanggaran serius), tercatat dari #59.
+5. **Retensi & backup offsite** — backup terjadwal sudah ada (#36), belum ada retensi otomatis dan salinan di luar mesin.
+6. **Object storage untuk foto** — saat ini volume lokal; pindah bila stok/traffic bertambah besar.
+7. **Fitur permintaan pemilik** — perbandingan mobil, wishlist, multi-bahasa (di luar lingkup fase 1).
+8. **Runner pengukuran performa terpisah** — angka Lighthouse di mesin kerja bercampur dengan beban desktop; untuk gerbang rilis perlu mesin/runner idle.
+9. **Kebijakan `docker-compose.override.yml`** — saat ini untracked (remap port lokal 8080/8443). Putuskan: dokumentasikan sebagai contoh, atau hapus dan andalkan `docs/deploy.md`.
+10. **Isi bagian 2 (input pemilik)** — nama showroom, nomor WA/telepon, alamat, logo, parameter kredit awal masih placeholder dan harus diisi sebelum rilis publik.
+
