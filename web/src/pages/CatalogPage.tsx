@@ -713,7 +713,7 @@ export function CatalogPage() {
                           <div
                             className={`text-xl font-extrabold ${
                               isSold
-                                ? "text-slate-400 line-through"
+                                ? "text-slate-500 line-through"
                                 : "text-blue-800"
                             }`}
                           >
@@ -726,7 +726,7 @@ export function CatalogPage() {
                             </div>
                           )}
                           {isSold && (
-                            <div className="text-xs text-slate-400 mt-0.5 italic">
+                            <div className="text-xs text-slate-500 mt-0.5 italic">
                               Unit sudah laku terjual
                             </div>
                           )}

@@ -493,7 +493,7 @@ export function CarDetailPage() {
               </div>
               <div
                 className={`text-2xl md:text-3xl font-black ${
-                  isSold ? "text-slate-400 line-through" : "text-blue-800"
+                  isSold ? "text-slate-500 line-through" : "text-blue-800"
                 }`}
               >
                 Rp {Number(car.price).toLocaleString("id-ID")}
@@ -715,7 +715,7 @@ export function CarDetailPage() {
         <div>
           <div
             className={`text-base font-extrabold ${
-              isSold ? "text-slate-400 line-through" : "text-blue-800"
+              isSold ? "text-slate-500 line-through" : "text-blue-800"
             }`}
           >
             Rp {Number(car.price).toLocaleString("id-ID")}
